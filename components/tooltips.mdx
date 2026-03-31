@@ -1,0 +1,196 @@
+---
+title: 'Tooltips'
+description: 'A Tooltip component for displaying contextual information on hover or focus.'
+keywords: ['tooltip', 'hover', 'popover', 'placement', 'zendesk garden']
+---
+
+The `@zendeskgarden/react-tooltips` package provides a `Tooltip` component for showing supplemental information when a user hovers over or focuses on an element. All components require a `ThemeProvider` at the root of your application.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-tooltips
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-tooltips
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-tooltips
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+---
+
+## Tooltip
+
+`Tooltip` wraps a single trigger element and shows a floating label on hover or focus. Pass the tooltip text or JSX via the `content` prop and place your trigger element as the child.
+
+The package also exports `Tooltip.Title` and `Tooltip.Paragraph` for structuring rich tooltip content.
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+
+<ThemeProvider>
+  <Tooltip content="Opens a new browser tab">
+    <button>External link</button>
+  </Tooltip>
+</ThemeProvider>
+```
+
+### Placement
+
+Control where the tooltip appears relative to its trigger with the `placement` prop.
+
+<Tabs>
+  <Tab title="Top">
+    ```jsx
+    <Tooltip content="Tooltip on top" placement="top">
+      <button>Hover me</button>
+    </Tooltip>
+    ```
+  </Tab>
+  <Tab title="Bottom">
+    ```jsx
+    <Tooltip content="Tooltip on bottom" placement="bottom">
+      <button>Hover me</button>
+    </Tooltip>
+    ```
+  </Tab>
+  <Tab title="Start">
+    ```jsx
+    <Tooltip content="Tooltip at start" placement="start">
+      <button>Hover me</button>
+    </Tooltip>
+    ```
+  </Tab>
+  <Tab title="End">
+    ```jsx
+    <Tooltip content="Tooltip at end" placement="end">
+      <button>Hover me</button>
+    </Tooltip>
+    ```
+  </Tab>
+</Tabs>
+
+The full set of placement values is: `'auto'`, `'top'`, `'top-start'`, `'top-end'`, `'bottom'`, `'bottom-start'`, `'bottom-end'`, `'end'`, `'end-top'`, `'end-bottom'`, `'start'`, `'start-top'`, `'start-bottom'`.
+
+### Rich content
+
+Use `Tooltip.Title` and `Tooltip.Paragraph` to build multi-line tooltip content.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+
+<ThemeProvider>
+  <Tooltip
+    size="large"
+    content={
+      <>
+        <Tooltip.Title>Keyboard shortcut</Tooltip.Title>
+        <Tooltip.Paragraph>Press Ctrl + S to save your work at any time.</Tooltip.Paragraph>
+      </>
+    }
+  >
+    <button>Save</button>
+  </Tooltip>
+</ThemeProvider>
+```
+
+### Controlled visibility
+
+Manage visibility externally using `isVisible` and `isInitialVisible`.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Tooltip } from '@zendeskgarden/react-tooltips';
+import { useState } from 'react';
+
+const [visible, setVisible] = useState(false);
+
+<ThemeProvider>
+  <Tooltip content="Controlled tooltip" isVisible={visible}>
+    <button
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+    >
+      Hover me
+    </button>
+  </Tooltip>
+</ThemeProvider>
+```
+
+### Tooltip props
+
+<ParamField path="body.content" type="ReactNode" required>
+  The content rendered inside the tooltip. Accepts a string or JSX.
+</ParamField>
+
+<ParamField path="body.placement" type="string" default="top">
+  The preferred placement of the tooltip relative to its trigger. Accepts `'auto'`, `'top'`, `'top-start'`, `'top-end'`, `'bottom'`, `'bottom-start'`, `'bottom-end'`, `'end'`, `'end-top'`, `'end-bottom'`, `'start'`, `'start-top'`, or `'start-bottom'`.
+</ParamField>
+
+<ParamField path="body.size" type="string" default="small">
+  Adjusts the padding and font size of the tooltip. Accepts `'small'`, `'medium'`, `'large'`, or `'extra-large'`.
+</ParamField>
+
+<ParamField path="body.type" type="string" default="dark">
+  Specifies the tooltip color scheme. Accepts `'dark'` or `'light'`.
+</ParamField>
+
+<ParamField path="body.hasArrow" type="boolean">
+  Adds a directional arrow pointing to the trigger element.
+</ParamField>
+
+<ParamField path="body.delayMS" type="number">
+  Adds a delay in milliseconds before the tooltip opens and closes.
+</ParamField>
+
+<ParamField path="body.isVisible" type="boolean">
+  Controls tooltip visibility externally. When set, the component is in controlled mode.
+</ParamField>
+
+<ParamField path="body.isInitialVisible" type="boolean">
+  Displays the tooltip on the initial render.
+</ParamField>
+
+<ParamField path="body.isLabel" type="boolean">
+  Indicates the tooltip is the primary label for its trigger rather than a supplemental description. When `true`, the tooltip content is used as `aria-label` instead of `aria-describedby`.
+</ParamField>
+
+<ParamField path="body.fallbackPlacements" type="GardenPlacement[]">
+  A list of fallback placements to try when the preferred placement has insufficient space.
+</ParamField>
+
+<ParamField path="body.zIndex" type="number | string">
+  Sets the `z-index` of the tooltip.
+</ParamField>
+
+<ParamField path="body.appendToNode" type="Element">
+  Appends the tooltip to the specified element instead of the default portal target.
+</ParamField>
+
+<ParamField path="body.refKey" type="string">
+  Defines the ref key used to position the tooltip on the trigger element.
+</ParamField>
+
+<ParamField path="body.children" type="ReactElement" required>
+  The trigger element. Must be a single React element.
+</ParamField>

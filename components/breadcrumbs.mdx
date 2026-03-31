@@ -1,0 +1,109 @@
+---
+title: 'Breadcrumbs'
+description: 'Breadcrumb navigation component for displaying the current page location within a site hierarchy.'
+keywords: ['breadcrumb', 'navigation', 'hierarchy', 'wayfinding']
+---
+
+The `@zendeskgarden/react-breadcrumbs` package provides an accessible `Breadcrumb` component that renders a `<nav>` landmark with chevron-separated links. The last item is automatically marked as the current page via `aria-current="page"`.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-breadcrumbs
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-breadcrumbs
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-breadcrumbs
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+<Note>
+  Place a `ThemeProvider` from `@zendeskgarden/react-theming` at the root of your React application. All Garden components must be rendered inside a `ThemeProvider`.
+</Note>
+
+## Usage
+
+### Basic breadcrumb
+
+Pass any React nodes as children. The `Breadcrumb` component inserts chevron separators between items and applies `aria-current="page"` to the last child automatically.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Breadcrumb } from '@zendeskgarden/react-breadcrumbs';
+import { Anchor } from '@zendeskgarden/react-buttons';
+
+const Example = () => (
+  <ThemeProvider>
+    <Breadcrumb>
+      <Anchor href="/">Root</Anchor>
+      <Anchor href="/section">Section</Anchor>
+      <span>Current page</span>
+    </Breadcrumb>
+  </ThemeProvider>
+);
+```
+
+<Tip>
+  Use `Anchor` from `@zendeskgarden/react-buttons` for the navigable items. The last item does not need to be a link — a plain `<span>` works well for the current page.
+</Tip>
+
+### Deep hierarchy
+
+```tsx
+const Example = () => (
+  <ThemeProvider>
+    <Breadcrumb>
+      <Anchor href="/">Home</Anchor>
+      <Anchor href="/support">Support</Anchor>
+      <Anchor href="/support/tickets">Tickets</Anchor>
+      <span>Ticket #12345</span>
+    </Breadcrumb>
+  </ThemeProvider>
+);
+```
+
+---
+
+## Breadcrumb
+
+The `Breadcrumb` component renders a `<nav>` element with an ordered list of items separated by chevron icons. It uses `@zendeskgarden/container-breadcrumb` internally for accessibility logic.
+
+### Accessibility
+
+- Renders as a `<nav>` landmark with `aria-label="Breadcrumbs"` by default.
+- The last child automatically receives `aria-current="page"`.
+- Chevron separators are hidden from assistive technology.
+
+### Props
+
+<ParamField path="aria-label" type="string" default="Breadcrumbs">
+  Accessible label for the `<nav>` landmark. Override this with a localized string when targeting non-English users.
+</ParamField>
+
+All other standard `HTMLAttributes<HTMLElement>` props are forwarded to the `<nav>` element.
+
+---
+
+## Exports
+
+The following are exported from `@zendeskgarden/react-breadcrumbs`:
+
+| Export | Description |
+|--------|-------------|
+| `Breadcrumb` | Breadcrumb navigation container |

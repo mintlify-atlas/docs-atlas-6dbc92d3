@@ -1,0 +1,322 @@
+---
+title: 'Buttons'
+description: 'Interactive button components for triggering actions, navigating, and toggling state.'
+keywords: ['button', 'icon button', 'toggle button', 'split button', 'chevron button', 'anchor']
+---
+
+The `@zendeskgarden/react-buttons` package provides a set of accessible button components that cover the full range of interaction patterns: primary actions, icon-only buttons, toggle states, split-button menus, and more.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-buttons
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-buttons
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-buttons
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+<Note>
+  Place a `ThemeProvider` from `@zendeskgarden/react-theming` at the root of your React application. All Garden components must be rendered inside a `ThemeProvider`.
+</Note>
+
+## Button
+
+The core `Button` component renders an accessible `<button>` element. Use the appearance props to communicate intent.
+
+### Basic usage
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const Example = () => (
+  <ThemeProvider>
+    <Button onClick={() => console.log('clicked')}>Default</Button>
+    <Button isPrimary>Primary</Button>
+    <Button isDanger>Danger</Button>
+    <Button isPrimary isDanger>Primary danger</Button>
+    <Button isBasic>Basic</Button>
+    <Button isLink>Link</Button>
+  </ThemeProvider>
+);
+```
+
+### With icons
+
+Use `Button.StartIcon` and `Button.EndIcon` to place icons at either end of a button label. Pass `isRotated` to animate a chevron.
+
+```tsx
+import React, { useState } from 'react';
+import { Button } from '@zendeskgarden/react-buttons';
+import ShieldIcon from '@zendeskgarden/icons/src/16/shield-stroke.svg';
+import ChevronDownIcon from '@zendeskgarden/icons/src/16/chevron-down-stroke.svg';
+
+const MediaButton = ({ children, ...props }) => {
+  const [isOpen, setOpen] = useState(false);
+
+  return (
+    <Button onClick={() => setOpen(!isOpen)} {...props}>
+      <Button.StartIcon>
+        <ShieldIcon />
+      </Button.StartIcon>
+      {children}
+      <Button.EndIcon isRotated={isOpen}>
+        <ChevronDownIcon />
+      </Button.EndIcon>
+    </Button>
+  );
+};
+```
+
+### Props
+
+<ParamField path="isPrimary" type="boolean">
+  Applies primary (filled) button styling.
+</ParamField>
+
+<ParamField path="isDanger" type="boolean">
+  Applies danger styling. Can be combined with `isPrimary` for a filled danger button.
+</ParamField>
+
+<ParamField path="isBasic" type="boolean">
+  Applies basic (borderless) button styling.
+</ParamField>
+
+<ParamField path="isLink" type="boolean">
+  Renders the button with link (anchor) styling and an underline.
+</ParamField>
+
+<ParamField path="isNeutral" type="boolean">
+  Applies neutral color styling.
+</ParamField>
+
+<ParamField path="isPill" type="boolean">
+  Applies pill-shaped (fully rounded) button styling.
+</ParamField>
+
+<ParamField path="isStretched" type="boolean">
+  Stretches the button to fill its container width.
+</ParamField>
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="medium">
+  Controls the button size.
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies an inset `box-shadow` on focus instead of an outset ring.
+</ParamField>
+
+### Button.StartIcon props
+
+<ParamField path="isRotated" type="boolean">
+  Rotates the icon 180 degrees. Useful for open/close chevrons.
+</ParamField>
+
+### Button.EndIcon props
+
+<ParamField path="isRotated" type="boolean">
+  Rotates the icon 180 degrees. Useful for open/close chevrons.
+</ParamField>
+
+---
+
+## IconButton
+
+`IconButton` renders an icon-only button with no visible label. Defaults to `isBasic` and `isPill` styling. Always provide an `aria-label` for accessibility.
+
+```tsx
+import { IconButton } from '@zendeskgarden/react-buttons';
+import SettingsIcon from '@zendeskgarden/icons/src/16/settings-stroke.svg';
+
+const Example = () => (
+  <ThemeProvider>
+    <IconButton aria-label="Settings">
+      <SettingsIcon />
+    </IconButton>
+    <IconButton aria-label="Delete" isDanger>
+      <TrashIcon />
+    </IconButton>
+  </ThemeProvider>
+);
+```
+
+### Props
+
+`IconButton` accepts all `Button` props except `isStretched` and `isLink`, plus:
+
+<ParamField path="isRotated" type="boolean">
+  Rotates the icon 180 degrees.
+</ParamField>
+
+---
+
+## ToggleButton
+
+`ToggleButton` extends `Button` to manage a pressed/unpressed state via the `isPressed` prop. It sets `aria-pressed` automatically.
+
+```tsx
+import React, { useState } from 'react';
+import { ToggleButton } from '@zendeskgarden/react-buttons';
+
+const Example = () => {
+  const [isPressed, setPressed] = useState(false);
+
+  return (
+    <ThemeProvider>
+      <ToggleButton isPressed={isPressed} onClick={() => setPressed(!isPressed)}>
+        Bold
+      </ToggleButton>
+    </ThemeProvider>
+  );
+};
+```
+
+### Props
+
+`ToggleButton` accepts all `Button` props, plus:
+
+<ParamField path="isPressed" type="boolean | 'mixed'">
+  Indicates whether the button is in a pressed state. Use `"mixed"` when the toggle controls multiple elements with different values.
+</ParamField>
+
+---
+
+## SplitButton
+
+`SplitButton` groups a primary action button alongside a `ChevronButton` (or `IconButton`) for a dropdown trigger. The context automatically applies inset focus styling to grouped buttons.
+
+```tsx
+import { Button, SplitButton, ChevronButton } from '@zendeskgarden/react-buttons';
+
+const Example = () => (
+  <ThemeProvider>
+    <SplitButton>
+      <Button isPrimary>Submit</Button>
+      <ChevronButton isPrimary aria-label="More options" />
+    </SplitButton>
+  </ThemeProvider>
+);
+```
+
+<Tip>
+  `SplitButton` renders a `<div>` wrapper that provides a context for its children. Pair it with a `Menu` or `Dropdown` component to build a full split-button menu.
+</Tip>
+
+---
+
+## ChevronButton
+
+`ChevronButton` is a pre-built `IconButton` that renders a downward-pointing chevron icon. Use it as the dropdown trigger in a `SplitButton`.
+
+```tsx
+import { ChevronButton } from '@zendeskgarden/react-buttons';
+
+const Example = () => (
+  <ThemeProvider>
+    <ChevronButton aria-label="Open menu" />
+    <ChevronButton aria-label="Open menu" isPrimary />
+  </ThemeProvider>
+);
+```
+
+`ChevronButton` accepts the same props as `IconButton`. Its defaults are `isBasic={false}` and `isPill={false}`.
+
+---
+
+## Anchor
+
+`Anchor` renders an accessible `<a>` element styled to match Garden's button link style.
+
+```tsx
+import { Anchor } from '@zendeskgarden/react-buttons';
+
+const Example = () => (
+  <ThemeProvider>
+    <Anchor href="https://zendeskgarden.github.io" isExternal>
+      Garden Design System
+    </Anchor>
+  </ThemeProvider>
+);
+```
+
+### Props
+
+<ParamField path="isDanger" type="boolean">
+  Applies danger (red) link styling.
+</ParamField>
+
+<ParamField path="isExternal" type="boolean">
+  Attaches `target="_blank"` and `rel="noopener noreferrer"` and renders an external link icon.
+</ParamField>
+
+<ParamField path="externalIconLabel" type="string">
+  Accessible label for the external link icon. Provide a translated string when targeting non-English locales.
+</ParamField>
+
+<ParamField path="isUnderlined" type="boolean">
+  Shows an underline on the anchor.
+</ParamField>
+
+---
+
+## ToggleIconButton
+
+`ToggleIconButton` combines `IconButton` with toggle behavior. Set `isPressed` to control its state and `aria-label` for screen readers.
+
+```tsx
+import React, { useState } from 'react';
+import { ToggleIconButton } from '@zendeskgarden/react-buttons';
+import StarIcon from '@zendeskgarden/icons/src/16/star-stroke.svg';
+
+const Example = () => {
+  const [isPressed, setPressed] = useState(false);
+
+  return (
+    <ThemeProvider>
+      <ToggleIconButton
+        aria-label={isPressed ? 'Unstar' : 'Star'}
+        isPressed={isPressed}
+        onClick={() => setPressed(!isPressed)}
+      >
+        <StarIcon />
+      </ToggleIconButton>
+    </ThemeProvider>
+  );
+};
+```
+
+`ToggleIconButton` accepts all `IconButton` props plus the `isPressed` prop from `ToggleButton`.
+
+---
+
+## Exports
+
+The following are exported from `@zendeskgarden/react-buttons`:
+
+| Export | Description |
+|--------|-------------|
+| `Button` | Base button with `Button.StartIcon` and `Button.EndIcon` subcomponents |
+| `Anchor` | Styled anchor element |
+| `ChevronButton` | Icon button pre-loaded with a chevron icon |
+| `IconButton` | Icon-only button |
+| `SplitButton` | Wrapper for grouped action + dropdown buttons |
+| `ToggleButton` | Button with `aria-pressed` state management |
+| `ToggleIconButton` | Icon-only button with `aria-pressed` state management |

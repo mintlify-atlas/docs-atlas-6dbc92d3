@@ -1,0 +1,173 @@
+---
+title: 'Contributing'
+description: 'How to set up a development environment and submit contributions to Garden.'
+keywords: ['contributing', 'development', 'pull request', 'package', 'testing', 'linting', 'build']
+---
+
+Garden welcomes contributions. Opening an [issue](https://github.com/zendeskgarden/react-components/issues) first is often the best way to start a conversation before submitting a pull request.
+
+Garden follows a [code of conduct](https://github.com/zendeskgarden/react-components/blob/main/.github/CODE_OF_CONDUCT.md) as its guide for community behavior.
+
+<Note>
+  Unless you are a member of the core team, brand new package PRs are unlikely to be accepted.
+  Please open an [issue](https://github.com/zendeskgarden/react-components/issues/new) to discuss
+  adding a new component package before writing code.
+</Note>
+
+## Development environment
+
+Garden is a multi-package repo managed with [Lerna](https://lernajs.io/). The top-level `package.json` contains the dependencies and scripts needed to manage the repo. Individual `@zendeskgarden` packages live under `packages/` and are published to the npm registry.
+
+**Prerequisites:** [npm](https://www.npmjs.com/package/npm) installed on your system.
+
+<Steps>
+  <Step title="Clone the repo">
+    ```bash
+    git clone https://github.com/zendeskgarden/react-components.git
+    cd react-components
+    ```
+  </Step>
+  <Step title="Install dependencies">
+    ```bash
+    npm install
+    ```
+
+    The initial install also runs a full repo build automatically.
+  </Step>
+  <Step title="Start Storybook">
+    ```bash
+    npm start
+    ```
+
+    To limit Storybook to a single package, set the `PACKAGE` environment variable:
+
+    ```bash
+    PACKAGE=buttons npm start
+    ```
+  </Step>
+</Steps>
+
+## Creating a new package
+
+Use `npm run new` to generate a new component package from the built-in template. The command prompts you for a name (for example, `test`) and creates the package under `/packages`.
+
+```bash
+npm run new
+```
+
+After generation, run `npm start` to view the new package in Storybook.
+
+### Package structure
+
+All packages follow this layout (for example, under `packages/test`):
+
+```
+packages/test/
+├── demo/           — visual component demos (Storybook stories)
+├── src/
+│   ├── elements/   — high-abstraction components that wrap interaction behavior and styling
+│   ├── styled/     — view-level styled-components with theme-based CSS
+│   └── index.ts    — public-facing component exports for this package
+├── package.json    — configuration for the package published to the registry
+└── README.md       — essential package description, install, and usage instructions
+```
+
+See [Architecture](/guides/architecture) for in-depth treatment of the Container-View-Element structure and [TypeScript](/guides/typescript) for interface and type conventions.
+
+## Testing
+
+Garden holds steady at ~95% test coverage. DOM testing uses [React Testing Library](https://testing-library.com/react) with [Jest](https://jestjs.io/) as the underlying API and runner.
+
+```bash
+npm test
+```
+
+### What to test
+
+- All exported elements must be tested, limited to the surface area the component exposes. Do not re-test imported `react-containers`.
+- Styled views may benefit from testing — asserting that various options affect one or two notable CSS values.
+- In complex components where DOM structure or state would be unwieldy to determine, `data-test-*` attributes can be added to aid testing. These attributes are stripped from published components during the build process.
+
+## Linting and formatting
+
+<Tabs>
+  <Tab title="Lint">
+    Lint JS/TS, CSS, and Markdown files:
+
+    ```bash
+    npm run lint
+    ```
+
+    Linting uses `eslint`, `stylelint`, and `markdownlint`. It also runs automatically as a git `pre-commit` hook.
+  </Tab>
+  <Tab title="Format">
+    Format JS/TS and `package.json` files:
+
+    ```bash
+    npm run format
+    ```
+
+    Formatting uses `prettier` and also runs as a git `pre-commit` hook.
+  </Tab>
+</Tabs>
+
+## Building packages
+
+Garden packages are built with [Rollup](https://rollupjs.org/). Each package distribution includes:
+
+- CommonJS bundle (the `main` entry)
+- ES module bundle (the `module` entry)
+- TypeScript type definitions
+
+<CodeGroup>
+
+```bash all packages
+npm run build
+```
+
+```bash single package
+npm run build -- --scope @zendeskgarden/react-buttons
+```
+
+</CodeGroup>
+
+## Package dependencies
+
+Garden keeps dependencies minimal. Typical package dependencies are:
+
+| Type | Package |
+|------|---------|
+| Dependency | `polished` |
+| Peer dependency | `@zendeskgarden/react-theming` |
+| Peer dependency | `react` |
+| Peer dependency | `react-dom` |
+| Peer dependency | `styled-components` |
+
+When additional dependencies are required, install them with [`lerna add`](https://github.com/lerna/lerna/tree/main/commands/add#readme). The [Renovate](https://renovatebot.com) bot keeps dependencies up to date over time.
+
+## Pull request workflow
+
+<Steps>
+  <Step title="Fork and branch">
+    Fork the repo and create a branch. Format your branch name as `username/verb-noun`.
+  </Step>
+  <Step title="Develop and commit">
+    Commit locally and push to the remote branch regularly. Use whatever casual commit messaging you find suitable — the core team will help apply a squashed [conventional commit](https://conventionalcommits.org/) message at merge time.
+  </Step>
+  <Step title="Update documentation">
+    If your changes result in a major modification, make sure all documentation is up to date.
+  </Step>
+  <Step title="Open a pull request">
+    Open a new pull request via GitHub. The [PR template](https://github.com/zendeskgarden/react-components/blob/main/.github/PULL_REQUEST_TEMPLATE.md) guides you toward a description that can serve as a conventional commit message.
+  </Step>
+  <Step title="Pass CI and get approval">
+    Every PR must pass CI checks and receive at least one approval to be considered for merge.
+  </Step>
+  <Step title="Merge">
+    Garden [maintainers](https://github.com/orgs/zendeskgarden/teams/maintainers) manage the squashed merge to the main branch using your PR title and description as the conventional commit scope and body.
+  </Step>
+</Steps>
+
+## License
+
+By contributing to Garden, you agree that your contributions will be licensed under the [Apache License, Version 2.0](https://github.com/zendeskgarden/react-components/blob/main/LICENSE.md).

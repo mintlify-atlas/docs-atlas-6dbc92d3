@@ -1,0 +1,125 @@
+{
+  "projectType": "frontend",
+  "projectName": "Zendesk Garden React Components",
+  "projectDescription": "A collection of accessible, themeable React components that implement the Zendesk Garden design system, published as individual npm packages.",
+  "theme": "willow",
+  "primaryColor": "#34746a",
+  "lightColor": "#04343c",
+  "darkColor": "#5bab92",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "theming"
+            ]
+          },
+          {
+            "group": "Layout & Structure",
+            "pages": [
+              "components/chrome",
+              "components/grid",
+              "components/accordions"
+            ]
+          },
+          {
+            "group": "Forms & Inputs",
+            "pages": [
+              "components/forms",
+              "components/dropdowns",
+              "components/datepickers",
+              "components/colorpickers"
+            ]
+          },
+          {
+            "group": "Overlays & Feedback",
+            "pages": [
+              "components/modals",
+              "components/notifications",
+              "components/tooltips",
+              "components/loaders"
+            ]
+          },
+          {
+            "group": "Navigation & Data",
+            "pages": [
+              "components/buttons",
+              "components/tabs",
+              "components/tables",
+              "components/pagination",
+              "components/breadcrumbs"
+            ]
+          },
+          {
+            "group": "Display",
+            "pages": [
+              "components/avatars",
+              "components/tags",
+              "components/typography",
+              "components/draggable"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Development",
+            "pages": [
+              "guides/architecture",
+              "guides/typescript",
+              "guides/contributing"
+            ]
+          },
+          {
+            "group": "Versioning & Migration",
+            "pages": [
+              "guides/versioning",
+              "guides/migration"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "22+ accessible React components following WAI-ARIA patterns",
+    "Full theming support via ThemeProvider and theme object customization",
+    "RTL (right-to-left) layout support built in",
+    "Light and dark color scheme support via ColorSchemeProvider",
+    "TypeScript-first with comprehensive type definitions",
+    "Container-View-Element architecture for separation of concerns",
+    "Individual npm packages for tree-shakeable consumption",
+    "styled-components based with CSS-in-JS theming"
+  ],
+  "publicApiSurface": [
+    "Accordion, Accordion.Header, Accordion.Label, Accordion.Panel, Accordion.Section",
+    "Button, Button.StartIcon, Button.EndIcon",
+    "Field, Input, Textarea, Select, Checkbox, Radio, Toggle, Range, FileUpload, FileList",
+    "Modal, Modal.Header, Modal.Body, Modal.Footer, Modal.FooterItem, Modal.Close",
+    "Drawer, TooltipDialog",
+    "ThemeProvider, ColorSchemeProvider, DEFAULT_THEME, useColorScheme",
+    "Notification, Alert, Well",
+    "Tooltip",
+    "Table, Table.Head, Table.Body, Table.Row, Table.Cell, Table.SortableCell",
+    "Tabs, Tabs.Tab, Tabs.Panel, Tabs.TabList",
+    "Tag, Tag.Close",
+    "Avatar, Avatar.Text, Avatar.Status",
+    "Breadcrumb",
+    "Pagination",
+    "Grid, Row, Col",
+    "Chrome, Chrome.Nav, Chrome.NavItem, Chrome.Body, Chrome.Sidebar",
+    "Colorpicker, Colorpicker.Preview, ColorSwatchPicker",
+    "Datepicker, DatepickerRange",
+    "Combobox, Combobox.Option, Combobox.OptGroup, Select, Multiselect",
+    "Loaders (Skeleton, Spinner, Dots, Progress)",
+    "Typography (Title, LG, MD, SM, XS, Blockquote, Code, UnorderedList, OrderedList)",
+    "Draggable, DraggableList, DropIndicator"
+  ]
+}

@@ -1,0 +1,359 @@
+---
+title: "Draggable"
+description: "Drag-and-drop UI primitives — Draggable, DraggableList, and Dropzone — from the Garden design system."
+---
+
+The `@zendeskgarden/react-draggable` package provides unstyled drag-and-drop primitives that you compose with your own drag-and-drop library (such as [dnd-kit](https://dndkit.com/) or [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd)). Garden handles visual styling and accessibility; you handle the drag logic.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-draggable
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-draggable
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-draggable
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+## Draggable
+
+`Draggable` is the individual drag item. It renders a `div` (by default) and is focusable via keyboard. Use `Draggable.Grip` to show the grip handle icon and `Draggable.Content` to wrap text or other content.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Draggable } from '@zendeskgarden/react-draggable';
+
+const App = () => (
+  <ThemeProvider>
+    <Draggable>
+      <Draggable.Grip />
+      <Draggable.Content>Drag me</Draggable.Content>
+    </Draggable>
+  </ThemeProvider>
+);
+```
+
+### States
+
+<Tabs>
+  <Tab title="Grabbed">
+    ```tsx
+    <Draggable isGrabbed>
+      <Draggable.Grip />
+      <Draggable.Content>Currently dragging</Draggable.Content>
+    </Draggable>
+    ```
+  </Tab>
+  <Tab title="Placeholder">
+    ```tsx
+    <Draggable isPlaceholder>
+      <Draggable.Grip />
+      <Draggable.Content>Original position</Draggable.Content>
+    </Draggable>
+    ```
+  </Tab>
+  <Tab title="Disabled">
+    ```tsx
+    <Draggable isDisabled>
+      <Draggable.Grip />
+      <Draggable.Content>Cannot be dragged</Draggable.Content>
+    </Draggable>
+    ```
+  </Tab>
+  <Tab title="Compact">
+    ```tsx
+    <Draggable isCompact>
+      <Draggable.Grip />
+      <Draggable.Content>Compact item</Draggable.Content>
+    </Draggable>
+    ```
+  </Tab>
+  <Tab title="Bare">
+    ```tsx
+    <Draggable isBare>
+      <Draggable.Grip />
+      <Draggable.Content>No border</Draggable.Content>
+    </Draggable>
+    ```
+  </Tab>
+</Tabs>
+
+### Props
+
+<ParamField path="isGrabbed" type="boolean">
+  Applies grab styling to indicate the item is currently being dragged.
+</ParamField>
+
+<ParamField path="isPlaceholder" type="boolean">
+  Hides content and applies placeholder background styling to represent the original position during a drag.
+</ParamField>
+
+<ParamField path="isDisabled" type="boolean">
+  Disables the draggable and applies `aria-disabled`.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact (reduced) spacing.
+</ParamField>
+
+<ParamField path="isBare" type="boolean">
+  Removes borders from the draggable item.
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies an inset `box-shadow` on focus instead of the default outset ring.
+</ParamField>
+
+<ParamField path="tag" type="any" default="'div'">
+  Updates the rendered HTML element.
+</ParamField>
+
+---
+
+## DraggableList
+
+`DraggableList` renders a `<ul>` that provides context for its items. Place `DraggableList.Item` elements inside it, each containing a `Draggable`. Use `DraggableList.DropIndicator` to mark the target insertion point during a drag.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Draggable, DraggableList } from '@zendeskgarden/react-draggable';
+
+const App = () => (
+  <ThemeProvider>
+    <DraggableList>
+      <DraggableList.Item>
+        <Draggable>
+          <Draggable.Grip />
+          <Draggable.Content>Petunia</Draggable.Content>
+        </Draggable>
+      </DraggableList.Item>
+      <DraggableList.Item>
+        <Draggable>
+          <Draggable.Grip />
+          <Draggable.Content>Chrysanthemum</Draggable.Content>
+        </Draggable>
+      </DraggableList.Item>
+      <DraggableList.Item>
+        <Draggable>
+          <Draggable.Grip />
+          <Draggable.Content>Dahlia</Draggable.Content>
+        </Draggable>
+      </DraggableList.Item>
+    </DraggableList>
+  </ThemeProvider>
+);
+```
+
+### Horizontal layout
+
+Set `isHorizontal` to flow list items inline rather than stacked.
+
+```tsx
+<DraggableList isHorizontal>
+  <DraggableList.Item>
+    <Draggable isCompact>
+      <Draggable.Content>Item A</Draggable.Content>
+    </Draggable>
+  </DraggableList.Item>
+  <DraggableList.Item>
+    <Draggable isCompact>
+      <Draggable.Content>Item B</Draggable.Content>
+    </Draggable>
+  </DraggableList.Item>
+</DraggableList>
+```
+
+### Props
+
+<ParamField path="isHorizontal" type="boolean">
+  Flows list items inline (horizontal layout) instead of stacked.
+</ParamField>
+
+---
+
+## DraggableList.DropIndicator
+
+`DraggableList.DropIndicator` renders a visual line between list items to indicate where a dragged item will be dropped. Place it as a sibling to `DraggableList.Item` elements. It inherits the list's `isHorizontal` orientation from context.
+
+```tsx
+import React, { Fragment } from 'react';
+import { Draggable, DraggableList } from '@zendeskgarden/react-draggable';
+
+const SortableList = ({ items, indicatorIndex }: { items: string[]; indicatorIndex: number }) => (
+  <DraggableList>
+    {indicatorIndex === 0 && (
+      <DraggableList.DropIndicator aria-label="Drop indicator" />
+    )}
+    {items.map((item, idx) => (
+      <Fragment key={item}>
+        {indicatorIndex === idx && idx > 0 && (
+          <DraggableList.DropIndicator aria-label="Drop indicator" />
+        )}
+        <DraggableList.Item>
+          <Draggable>
+            <Draggable.Grip />
+            <Draggable.Content>{item}</Draggable.Content>
+          </Draggable>
+        </DraggableList.Item>
+      </Fragment>
+    ))}
+    {indicatorIndex === items.length && (
+      <DraggableList.DropIndicator aria-label="Drop indicator" />
+    )}
+  </DraggableList>
+);
+```
+
+<Note>
+  `DraggableList.DropIndicator` auto-generates an `aria-label` of "Drop indicator". Override it with the `aria-label` prop when your context requires a more specific label.
+</Note>
+
+---
+
+## Dropzone
+
+`Dropzone` renders a droppable target area — for example, a trash zone for deleting items or a lane in a kanban board. Use `Dropzone.Message` for descriptive text and `Dropzone.Icon` for an icon. When `isDanger` is set and `Dropzone.Message` is present but no `Dropzone.Icon` is provided, a trash icon is rendered automatically.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Dropzone } from '@zendeskgarden/react-draggable';
+
+const App = () => (
+  <ThemeProvider>
+    <Dropzone>
+      <Dropzone.Message>Drag items here</Dropzone.Message>
+    </Dropzone>
+  </ThemeProvider>
+);
+```
+
+### Active and highlighted states
+
+```tsx
+<Dropzone isActive>
+  <Dropzone.Message>Drop to add</Dropzone.Message>
+</Dropzone>
+
+<Dropzone isActive isHighlighted>
+  <Dropzone.Message>Release to drop</Dropzone.Message>
+</Dropzone>
+```
+
+### Danger zone
+
+```tsx
+<Dropzone isDanger isActive>
+  <Dropzone.Message>Drop to delete</Dropzone.Message>
+</Dropzone>
+```
+
+### With icon
+
+```tsx
+import ReplaceIcon from '@zendeskgarden/svg-icons/src/16/arrow-retweet-stroke.svg';
+
+<Dropzone>
+  <Dropzone.Icon>
+    <ReplaceIcon />
+  </Dropzone.Icon>
+  <Dropzone.Message>Drop to replace</Dropzone.Message>
+</Dropzone>
+```
+
+### Props
+
+<ParamField path="isActive" type="boolean">
+  Indicates a drop is possible — apply this while a draggable hovers over a valid drop area.
+</ParamField>
+
+<ParamField path="isHighlighted" type="boolean">
+  Indicates a draggable is directly over the droppable area (ready to drop).
+</ParamField>
+
+<ParamField path="isDanger" type="boolean">
+  Applies danger (destructive) styling. A trash icon is added automatically when `Dropzone.Message` is present and no `Dropzone.Icon` is provided.
+</ParamField>
+
+<ParamField path="isDisabled" type="boolean">
+  Disables the dropzone.
+</ParamField>
+
+<ParamField path="isVertical" type="boolean">
+  Aligns dropzone message content vertically.
+</ParamField>
+
+<ParamField path="tag" type="any" default="'div'">
+  Updates the rendered HTML element.
+</ParamField>
+
+---
+
+## Full example
+
+The following example shows a sortable list with a drop indicator. Wire up `onDragStart`, `onDragOver`, and `onDrop` events using your chosen drag-and-drop library.
+
+```tsx
+import React, { Fragment, useState } from 'react';
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Draggable, DraggableList, Dropzone } from '@zendeskgarden/react-draggable';
+
+const INITIAL_ITEMS = ['Petunia', 'Chrysanthemum', 'Dahlia', 'Lavender'];
+
+const App = () => {
+  const [items, setItems] = useState(INITIAL_ITEMS);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [indicatorIndex, setIndicatorIndex] = useState<number | null>(null);
+
+  return (
+    <ThemeProvider>
+      <DraggableList>
+        {items.map((item, idx) => (
+          <Fragment key={item}>
+            {indicatorIndex === idx && (
+              <DraggableList.DropIndicator aria-label="Drop indicator" />
+            )}
+            <DraggableList.Item>
+              <Draggable
+                isGrabbed={dragIndex === idx}
+                draggable
+                onDragStart={() => setDragIndex(idx)}
+                onDragEnd={() => {
+                  setDragIndex(null);
+                  setIndicatorIndex(null);
+                }}
+              >
+                <Draggable.Grip />
+                <Draggable.Content>{item}</Draggable.Content>
+              </Draggable>
+            </DraggableList.Item>
+          </Fragment>
+        ))}
+        {indicatorIndex === items.length && (
+          <DraggableList.DropIndicator aria-label="Drop indicator" />
+        )}
+      </DraggableList>
+
+      <Dropzone isActive={dragIndex !== null}>
+        <Dropzone.Message>Drop to remove</Dropzone.Message>
+      </Dropzone>
+    </ThemeProvider>
+  );
+};
+```

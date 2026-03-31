@@ -1,0 +1,201 @@
+---
+title: 'Tabs'
+description: 'Tabbed navigation components for switching between related content panels.'
+keywords: ['tabs', 'tab list', 'tab panel', 'navigation', 'vertical tabs']
+---
+
+The `@zendeskgarden/react-tabs` package provides accessible tab components built on WAI-ARIA tab patterns. Tabs can be rendered horizontally (default) or vertically, and support both controlled and uncontrolled selection state.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-tabs
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-tabs
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-tabs
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+<Note>
+  Place a `ThemeProvider` from `@zendeskgarden/react-theming` at the root of your React application. All Garden components must be rendered inside a `ThemeProvider`.
+</Note>
+
+## Usage
+
+### Basic tabs
+
+```tsx
+import React, { useState } from 'react';
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Tabs } from '@zendeskgarden/react-tabs';
+
+const Example = () => {
+  const [selectedTab, setSelectedTab] = useState('tab-1');
+
+  return (
+    <ThemeProvider>
+      <Tabs selectedItem={selectedTab} onChange={setSelectedTab}>
+        <Tabs.TabList>
+          <Tabs.Tab item="tab-1">Tab 1</Tabs.Tab>
+          <Tabs.Tab item="tab-2">Tab 2</Tabs.Tab>
+          <Tabs.Tab disabled>Disabled tab</Tabs.Tab>
+          <Tabs.Tab item="tab-3">Tab 3</Tabs.Tab>
+        </Tabs.TabList>
+        <Tabs.TabPanel item="tab-1">Content for tab 1</Tabs.TabPanel>
+        <Tabs.TabPanel item="tab-2">Content for tab 2</Tabs.TabPanel>
+        <Tabs.TabPanel item="tab-3">Content for tab 3</Tabs.TabPanel>
+      </Tabs>
+    </ThemeProvider>
+  );
+};
+```
+
+Each `Tabs.Tab` receives an `item` value that links it to its matching `Tabs.TabPanel`. The `onChange` callback receives the `item` value of the newly selected tab.
+
+### Vertical tabs
+
+Pass `isVertical` to the `Tabs` component to stack the tab list alongside the panels.
+
+```tsx
+const Example = () => {
+  const [selectedTab, setSelectedTab] = useState('general');
+
+  return (
+    <ThemeProvider>
+      <Tabs isVertical selectedItem={selectedTab} onChange={setSelectedTab}>
+        <Tabs.TabList>
+          <Tabs.Tab item="general">General</Tabs.Tab>
+          <Tabs.Tab item="security">Security</Tabs.Tab>
+          <Tabs.Tab item="notifications">Notifications</Tabs.Tab>
+        </Tabs.TabList>
+        <Tabs.TabPanel item="general">General settings</Tabs.TabPanel>
+        <Tabs.TabPanel item="security">Security settings</Tabs.TabPanel>
+        <Tabs.TabPanel item="notifications">Notification preferences</Tabs.TabPanel>
+      </Tabs>
+    </ThemeProvider>
+  );
+};
+```
+
+### Uncontrolled tabs
+
+Omit `selectedItem` and `onChange` to let the component manage its own state. The first non-disabled tab is selected by default.
+
+```tsx
+const Example = () => (
+  <ThemeProvider>
+    <Tabs>
+      <Tabs.TabList>
+        <Tabs.Tab item="overview">Overview</Tabs.Tab>
+        <Tabs.Tab item="activity">Activity</Tabs.Tab>
+        <Tabs.Tab item="settings">Settings</Tabs.Tab>
+      </Tabs.TabList>
+      <Tabs.TabPanel item="overview">Overview content</Tabs.TabPanel>
+      <Tabs.TabPanel item="activity">Activity feed</Tabs.TabPanel>
+      <Tabs.TabPanel item="settings">Settings panel</Tabs.TabPanel>
+    </Tabs>
+  </ThemeProvider>
+);
+```
+
+---
+
+## Tabs
+
+The root container component. Provides state context to all child `Tab`, `TabList`, and `TabPanel` components.
+
+### Props
+
+<ParamField path="selectedItem" type="any">
+  The `item` value of the currently selected tab. When provided, the component operates in controlled mode and you must also provide `onChange`.
+</ParamField>
+
+<ParamField path="onChange" type="(selectedItem: any) => void">
+  Callback fired when the user selects a tab. Receives the `item` value of the newly selected tab.
+</ParamField>
+
+<ParamField path="isVertical" type="boolean">
+  Arranges the tab list and panels side by side in a vertical orientation.
+</ParamField>
+
+---
+
+## Tabs.TabList
+
+Wrapper for the list of `Tabs.Tab` components. Renders as a `<div>` with `role="tablist"`.
+
+```tsx
+<Tabs.TabList>
+  <Tabs.Tab item="one">One</Tabs.Tab>
+  <Tabs.Tab item="two">Two</Tabs.Tab>
+</Tabs.TabList>
+```
+
+`Tabs.TabList` forwards all standard `HTMLAttributes<HTMLDivElement>` props.
+
+---
+
+## Tabs.Tab
+
+An individual tab trigger. Must be a direct child of `Tabs.TabList`. Each tab needs a unique `item` value that matches its corresponding `Tabs.TabPanel`.
+
+### Props
+
+<ParamField path="item" type="any">
+  A unique value identifying this tab. Passed to `onChange` when the tab is selected and used to match the tab to its `TabPanel`.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Prevents the tab from being selected and removes it from the keyboard navigation order.
+</ParamField>
+
+---
+
+## Tabs.TabPanel
+
+The content panel associated with a tab. Renders hidden panels with `hidden` attribute for accessibility; the active panel is visible.
+
+### Props
+
+<ParamField path="item" type="any">
+  The value that links this panel to its corresponding `Tabs.Tab`. Must match the `item` value on the associated tab.
+</ParamField>
+
+---
+
+## Keyboard navigation
+
+| Key | Behavior |
+|-----|----------|
+| `ArrowLeft` / `ArrowRight` | Move focus between tabs (horizontal orientation) |
+| `ArrowUp` / `ArrowDown` | Move focus between tabs (vertical orientation) |
+| `Home` | Move focus to the first tab |
+| `End` | Move focus to the last tab |
+| `Enter` / `Space` | Select the focused tab |
+
+---
+
+## Exports
+
+The following are exported from `@zendeskgarden/react-tabs`:
+
+| Export | Description |
+|--------|-------------|
+| `Tabs` | Root container with `Tabs.Tab`, `Tabs.TabList`, and `Tabs.TabPanel` subcomponents |

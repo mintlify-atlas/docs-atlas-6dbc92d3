@@ -1,0 +1,354 @@
+---
+title: 'Datepickers'
+description: 'Calendar-based date selection components for single dates and date ranges, with full localization support.'
+keywords: ['datepicker', 'date picker', 'date range', 'calendar', 'date input', 'localization']
+---
+
+The `@zendeskgarden/react-datepickers` package provides `DatePicker` and `DatePickerRange` components. Both use [date-fns](https://date-fns.org/) for date calculations and the [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat) API for locale-aware formatting.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-datepickers
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming @zendeskgarden/react-forms
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-datepickers
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming @zendeskgarden/react-forms
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-datepickers
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming @zendeskgarden/react-forms
+```
+
+</CodeGroup>
+
+## DatePicker
+
+`DatePicker` wraps an `Input` from `@zendeskgarden/react-forms` and renders a positioned calendar dropdown. The wrapped input displays the formatted date and acts as the trigger.
+
+### Basic usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Appointment date</Field.Label>
+    <DatePicker
+      value={new Date()}
+      onChange={date => console.log('Selected:', date)}
+    >
+      <Input />
+    </DatePicker>
+  </Field>
+</ThemeProvider>
+```
+
+### Controlled date picker
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+import { useState } from 'react';
+
+function ControlledDatePicker() {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  return (
+    <ThemeProvider>
+      <Field>
+        <Field.Label>Start date</Field.Label>
+        <DatePicker value={selectedDate} onChange={setSelectedDate}>
+          <Input />
+        </DatePicker>
+      </Field>
+    </ThemeProvider>
+  );
+}
+```
+
+### With min and max constraints
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+
+const today = new Date();
+const oneMonthFromNow = new Date(today.getFullYear(), today.getMonth() + 1, today.getDate());
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Booking date</Field.Label>
+    <Field.Hint>Available dates: today through 30 days from now.</Field.Hint>
+    <DatePicker
+      minValue={today}
+      maxValue={oneMonthFromNow}
+      onChange={date => console.log('Booked:', date)}
+    >
+      <Input placeholder="Select a date" />
+    </DatePicker>
+  </Field>
+</ThemeProvider>
+```
+
+### Localization
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Datum</Field.Label>
+    <DatePicker
+      locale="de-DE"
+      weekStartsOn={1}
+      value={new Date()}
+      onChange={date => console.log(date)}
+    >
+      <Input />
+    </DatePicker>
+  </Field>
+</ThemeProvider>
+```
+
+### Custom date formatting
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { DatePicker } from '@zendeskgarden/react-datepickers';
+import { format } from 'date-fns';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Event date</Field.Label>
+    <DatePicker
+      value={new Date()}
+      formatDate={date => format(date, 'EEEE, MMMM do yyyy')}
+      onChange={date => console.log(date)}
+    >
+      <Input />
+    </DatePicker>
+  </Field>
+</ThemeProvider>
+```
+
+### DatePicker props
+
+<ParamField path="children" type="ReactElement" required>
+  The `Input` element that triggers the calendar and displays the formatted date.
+</ParamField>
+
+<ParamField path="value" type="Date">
+  The currently selected date in a controlled date picker.
+</ParamField>
+
+<ParamField path="onChange" type="(date: Date) => void">
+  Called when the user selects a date from the calendar.
+</ParamField>
+
+<ParamField path="minValue" type="Date">
+  Disables all calendar dates before this value.
+</ParamField>
+
+<ParamField path="maxValue" type="Date">
+  Disables all calendar dates after this value.
+</ParamField>
+
+<ParamField path="locale" type="string" default="en-US">
+  Locale string for date formatting. Accepts any valid [`Intl` locale](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#Locale_identification_and_negotiation).
+</ParamField>
+
+<ParamField path="weekStartsOn" type="0 | 1 | 2 | 3 | 4 | 5 | 6">
+  Overrides the locale default for the first day of the week. `0` is Sunday, `1` is Monday.
+</ParamField>
+
+<ParamField path="formatDate" type="(date: Date) => string">
+  Custom function to format the selected date string displayed in the input.
+</ParamField>
+
+<ParamField path="customParseDate" type="(inputValue: string) => Date">
+  Custom function to parse a localized date string typed into the input.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact styling to the calendar.
+</ParamField>
+
+<ParamField path="placement" type="string" default="bottom-start">
+  Adjusts the placement of the calendar dropdown relative to the input.
+</ParamField>
+
+<ParamField path="isAnimated" type="boolean" default="true">
+  Animates the calendar open and close transitions.
+</ParamField>
+
+<ParamField path="zIndex" type="number" default="1000">
+  `z-index` of the calendar overlay.
+</ParamField>
+
+<ParamField path="appendToNode" type="Element | DocumentFragment">
+  Renders the calendar in a portal attached to the specified DOM node.
+</ParamField>
+
+<ParamField path="refKey" type="string" default="ref">
+  The ref key used to position the calendar against the trigger input.
+</ParamField>
+
+## DatePickerRange
+
+`DatePickerRange` coordinates two `DatePicker` inputs to select a start and end date. It automatically moves focus from the start input to the end input after a start date is chosen.
+
+### Basic usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { DatePicker, DatePickerRange } from '@zendeskgarden/react-datepickers';
+
+<ThemeProvider>
+  <DatePickerRange onChange={({ startValue, endValue }) => console.log(startValue, endValue)}>
+    <Field>
+      <Field.Label>Check-in</Field.Label>
+      <DatePickerRange.Start>
+        <DatePicker>
+          <Input placeholder="Start date" />
+        </DatePicker>
+      </DatePickerRange.Start>
+    </Field>
+    <Field>
+      <Field.Label>Check-out</Field.Label>
+      <DatePickerRange.End>
+        <DatePicker>
+          <Input placeholder="End date" />
+        </DatePicker>
+      </DatePickerRange.End>
+    </Field>
+  </DatePickerRange>
+</ThemeProvider>
+```
+
+### Controlled range picker
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+import { DatePicker, DatePickerRange } from '@zendeskgarden/react-datepickers';
+import { useState } from 'react';
+
+function ControlledRangePicker() {
+  const [startValue, setStartValue] = useState(undefined);
+  const [endValue, setEndValue] = useState(undefined);
+
+  return (
+    <ThemeProvider>
+      <DatePickerRange
+        startValue={startValue}
+        endValue={endValue}
+        onChange={({ startValue: s, endValue: e }) => {
+          setStartValue(s);
+          setEndValue(e);
+        }}
+      >
+        <Field>
+          <Field.Label>From</Field.Label>
+          <DatePickerRange.Start>
+            <DatePicker>
+              <Input placeholder="Start date" />
+            </DatePicker>
+          </DatePickerRange.Start>
+        </Field>
+        <Field>
+          <Field.Label>To</Field.Label>
+          <DatePickerRange.End>
+            <DatePicker>
+              <Input placeholder="End date" />
+            </DatePicker>
+          </DatePickerRange.End>
+        </Field>
+      </DatePickerRange>
+    </ThemeProvider>
+  );
+}
+```
+
+### DatePickerRange props
+
+<ParamField path="startValue" type="Date">
+  The selected start date in a controlled range picker.
+</ParamField>
+
+<ParamField path="endValue" type="Date">
+  The selected end date in a controlled range picker.
+</ParamField>
+
+<ParamField path="onChange" type="(values: { startValue?: Date; endValue?: Date }) => void">
+  Called when either the start or end date changes.
+</ParamField>
+
+<ParamField path="locale" type="string" default="en-US">
+  Locale string applied to both date pickers.
+</ParamField>
+
+<ParamField path="weekStartsOn" type="0 | 1 | 2 | 3 | 4 | 5 | 6">
+  Overrides the locale default first day of the week.
+</ParamField>
+
+<ParamField path="minValue" type="Date">
+  Disables calendar dates before this value in both pickers.
+</ParamField>
+
+<ParamField path="maxValue" type="Date">
+  Disables calendar dates after this value in both pickers.
+</ParamField>
+
+<ParamField path="formatDate" type="(date: Date) => string">
+  Custom function to format the date string displayed in each input.
+</ParamField>
+
+<ParamField path="customParseDate" type="(inputValue?: string) => Date">
+  Custom function to parse a typed date string in each input.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean" default="false">
+  Applies compact styling to both calendars.
+</ParamField>
+
+### DatePickerRange subcomponents
+
+<ParamField path="DatePickerRange.Start">
+  Wrapper that registers its child `DatePicker` as the range start input. Auto-advances focus to the end input on date selection.
+</ParamField>
+
+<ParamField path="DatePickerRange.End">
+  Wrapper that registers its child `DatePicker` as the range end input. Auto-returns focus to the start input on date selection.
+</ParamField>
+
+<ParamField path="DatePickerRange.Calendar">
+  Internal calendar component used to render the shared range calendar view. Advanced usage only.
+</ParamField>
+
+<Tip>
+  Both calendars in a `DatePickerRange` share range context. Days between selected start and end dates are highlighted automatically — no additional configuration required.
+</Tip>
+
+<Note>
+  `DatePicker` requires `@zendeskgarden/react-forms` as a peer dependency because it expects an `Input` component as its child.
+</Note>

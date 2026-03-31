@@ -1,0 +1,127 @@
+---
+title: 'TypeScript'
+description: 'Standardized interface and type conventions for Garden components.'
+keywords: ['TypeScript', 'interfaces', 'types', 'enums', 'IComponentProps', 'src/types']
+---
+
+Garden follows a standardized approach for shared interface and type definitions. These standards result in code structured for reuse and expose type primitives that are extracted for generated API documentation.
+
+<Note>
+  Garden should not export `type` definitions. Types are available for reuse through the publicly
+  exported interface — for example, `IButtonProps['size']`.
+</Note>
+
+## Naming rules
+
+<AccordionGroup>
+  <Accordion title="Interfaces — IComponentXxxProps">
+    All interfaces use the `IComponentXxxProps` convention.
+
+    ```typescript
+    export interface IElementProps extends HTMLAttributes<HTMLElement> {
+      /** Applies compact styling */
+      isCompact?: boolean;
+    }
+
+    export interface IElementSubElementProps extends HTMLAttributes<HTMLElement> {
+      /** Applies regular (non-bold) font weight */
+      isRegular?: boolean;
+    }
+    ```
+
+    The interface name combines the parent component name with the subcomponent name when
+    typing a subcomponent.
+  </Accordion>
+  <Accordion title="Types — CamelCase">
+    All types use `CamelCase` convention.
+
+    ```typescript
+    export type ButtonSize = 'small' | 'medium' | 'large';
+    ```
+
+    Types are typically derived from array constants rather than defined independently (see below).
+  </Accordion>
+  <Accordion title="Array constants — UPPER_CASE as const">
+    All array constants use `UPPER_CASE` convention and are defined with `as const`.
+
+    ```typescript
+    export const BUTTON_SIZES = ['small', 'medium', 'large'] as const;
+
+    export type ButtonSize = (typeof BUTTON_SIZES)[number];
+    ```
+
+    Reusing `as const` arrays for type definitions keeps types and their valid values in sync and
+    makes the constants available to component consumers — for example, to populate a control
+    in a demo story.
+  </Accordion>
+</AccordionGroup>
+
+## File structure
+
+All exported [element component](/guides/architecture#element-components) interfaces live under a `src/types` folder within the package.
+
+```
+packages/buttons/
+├── src/
+│   ├── elements/
+│   │   └── Button.tsx
+│   ├── styled/
+│   │   └── StyledButton.ts
+│   ├── types/
+│   │   └── index.ts        ← exported element interfaces and constants
+│   └── index.ts            ← public package exports
+```
+
+<Tip>
+  Non-shared interfaces — such as view (`IStyledXxxProps`) and context interfaces — are **not**
+  placed under `src/types`. They live next to the components they type.
+</Tip>
+
+### Deriving view and context interfaces
+
+When possible, view component (`IStyledXxxProps`) and context interfaces are defined in terms of the exported element component interface. Familiarity with [TypeScript utility types](https://www.typescriptlang.org/docs/handbook/utility-types.html) is essential for understanding these extension type transformations:
+
+```typescript
+import type { IElementProps } from '../types';
+
+// View interface derived from the exported element interface
+interface IStyledElementProps extends Pick<IElementProps, 'isCompact'> {
+  theme: DefaultTheme;
+}
+```
+
+## No enums
+
+JavaScript enums are not acceptable for use in type definitions. Enums are [generally discouraged](https://www.typescriptlang.org/docs/handbook/enums.html#objects-vs-enums) in modern TypeScript, produce output that is difficult for docgen to parse, and run counter to how the web platform surfaces values (for example, [`KeyboardEvent.keyCode`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode)).
+
+Use `as const` arrays and derived union types instead:
+
+<CodeGroup>
+
+```typescript avoid.ts
+// Avoid — enum
+enum ButtonSize {
+  Small = 'small',
+  Medium = 'medium',
+  Large = 'large'
+}
+```
+
+```typescript prefer.ts
+// Prefer — as const array + derived type
+export const BUTTON_SIZES = ['small', 'medium', 'large'] as const;
+
+export type ButtonSize = (typeof BUTTON_SIZES)[number];
+```
+
+</CodeGroup>
+
+## What to export from index.ts
+
+The element interfaces and constants required to build a component's demo story are the same ones that should be exported from the package's `index.ts`. They offer the same benefit to external consumers — for example, providing the list of valid size values for a custom control:
+
+```typescript index.ts
+export type { IButtonProps } from './types';
+export { BUTTON_SIZES } from './types';
+export { Button } from './elements/Button';
+```

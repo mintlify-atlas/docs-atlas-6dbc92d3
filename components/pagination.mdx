@@ -1,0 +1,208 @@
+---
+title: 'Pagination'
+description: 'Pagination components for navigating through multi-page data sets using offset or cursor-based navigation.'
+keywords: ['pagination', 'offset pagination', 'cursor pagination', 'pages', 'navigation']
+---
+
+The `@zendeskgarden/react-pagination` package provides two pagination variants: `OffsetPagination` for numbered page navigation, and `CursorPagination` for first/previous/next/last navigation. Both are fully accessible and keyboard-navigable.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-pagination
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-pagination
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-pagination
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+<Note>
+  Place a `ThemeProvider` from `@zendeskgarden/react-theming` at the root of your React application. All Garden components must be rendered inside a `ThemeProvider`.
+</Note>
+
+## OffsetPagination
+
+`OffsetPagination` renders a numbered page list with previous and next controls. It automatically shows gap indicators (`…`) when the total number of pages exceeds the visible window.
+
+### Basic usage
+
+```tsx
+import React, { useState } from 'react';
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { OffsetPagination } from '@zendeskgarden/react-pagination';
+
+const Example = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  return (
+    <ThemeProvider>
+      <OffsetPagination
+        totalPages={11}
+        currentPage={currentPage}
+        onChange={setCurrentPage}
+      />
+    </ThemeProvider>
+  );
+};
+```
+
+### Customizing the page window
+
+Use `pagePadding` to control how many pages appear on either side of the current page, and `pageGap` to control where gap indicators appear relative to the first and last pages.
+
+```tsx
+const Example = () => {
+  const [currentPage, setCurrentPage] = useState(5);
+
+  return (
+    <ThemeProvider>
+      <OffsetPagination
+        totalPages={20}
+        currentPage={currentPage}
+        onChange={setCurrentPage}
+        pagePadding={3}
+        pageGap={3}
+      />
+    </ThemeProvider>
+  );
+};
+```
+
+### Localized labels
+
+Provide the `labels` prop to override the accessible labels for previous, next, and gap elements, and to customize the per-page button label.
+
+```tsx
+<OffsetPagination
+  totalPages={10}
+  currentPage={currentPage}
+  onChange={setCurrentPage}
+  labels={{
+    previous: 'Previous page',
+    next: 'Next page',
+    gap: 'Pages omitted',
+    renderPage: (page) => `Page ${page}`
+  }}
+/>
+```
+
+### Props
+
+<ParamField path="currentPage" type="number" required>
+  The currently active page number. Pages are 1-indexed.
+</ParamField>
+
+<ParamField path="totalPages" type="number" required>
+  The total number of pages.
+</ParamField>
+
+<ParamField path="onChange" type="(currentPage: number) => void">
+  Callback fired when the user navigates to a different page. Receives the new page number.
+</ParamField>
+
+<ParamField path="pagePadding" type="number" default="2">
+  The number of pages to display on either side of the current page before showing a gap indicator.
+</ParamField>
+
+<ParamField path="pageGap" type="number" default="2">
+  Controls the position of the leading and trailing gap indicators relative to the first and last pages.
+</ParamField>
+
+<ParamField path="labels" type="object">
+  Localized accessible labels for pagination controls.
+
+  <Expandable title="labels properties">
+    <ParamField path="labels.previous" type="string">
+      Accessible label for the previous-page button.
+    </ParamField>
+    <ParamField path="labels.next" type="string">
+      Accessible label for the next-page button.
+    </ParamField>
+    <ParamField path="labels.gap" type="string">
+      Accessible label for gap indicators.
+    </ParamField>
+    <ParamField path="labels.renderPage" type="(page: number) => string">
+      Function that returns an accessible label for a numbered page button.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+---
+
+## CursorPagination
+
+`CursorPagination` provides first, previous, next, and last navigation controls without numbered pages. It is suitable for APIs that return cursor tokens rather than page numbers.
+
+### Basic usage
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { CursorPagination } from '@zendeskgarden/react-pagination';
+
+const Example = () => (
+  <ThemeProvider>
+    <CursorPagination aria-label="Ticket navigation">
+      <CursorPagination.First onClick={() => goToFirst()}>First</CursorPagination.First>
+      <CursorPagination.Previous onClick={() => goToPrevious()}>Previous</CursorPagination.Previous>
+      <CursorPagination.Next onClick={() => goToNext()}>Next</CursorPagination.Next>
+      <CursorPagination.Last onClick={() => goToLast()}>Last</CursorPagination.Last>
+    </CursorPagination>
+  </ThemeProvider>
+);
+```
+
+<Tip>
+  Disable individual controls by passing the standard `disabled` prop. For example, disable `CursorPagination.Previous` and `CursorPagination.First` when on the first page.
+</Tip>
+
+```tsx
+const Example = ({ hasNextPage, hasPreviousPage }) => (
+  <ThemeProvider>
+    <CursorPagination aria-label="Results navigation">
+      <CursorPagination.First disabled={!hasPreviousPage}>First</CursorPagination.First>
+      <CursorPagination.Previous disabled={!hasPreviousPage}>Previous</CursorPagination.Previous>
+      <CursorPagination.Next disabled={!hasNextPage}>Next</CursorPagination.Next>
+      <CursorPagination.Last disabled={!hasNextPage}>Last</CursorPagination.Last>
+    </CursorPagination>
+  </ThemeProvider>
+);
+```
+
+### Subcomponents
+
+`CursorPagination` exposes four navigation button subcomponents. Each accepts all `ButtonHTMLAttributes<HTMLButtonElement>` props.
+
+| Subcomponent | Description |
+|---|---|
+| `CursorPagination.First` | Navigates to the first page |
+| `CursorPagination.Previous` | Navigates to the previous page |
+| `CursorPagination.Next` | Navigates to the next page |
+| `CursorPagination.Last` | Navigates to the last page |
+
+---
+
+## Exports
+
+The following are exported from `@zendeskgarden/react-pagination`:
+
+| Export | Description |
+|--------|-------------|
+| `OffsetPagination` | Numbered page pagination component |
+| `CursorPagination` | First/previous/next/last cursor-based pagination |

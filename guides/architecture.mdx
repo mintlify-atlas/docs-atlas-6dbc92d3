@@ -1,0 +1,249 @@
+---
+title: 'Architecture'
+description: 'The Container-View-Element (CVE) architecture behind Garden components.'
+keywords: ['architecture', 'CVE', 'container', 'view', 'element', 'styled-components', 'forwardRef']
+---
+
+Garden components follow a **Container-View-Element (CVE)** architecture that separates accessibility logic, visual styling, and public API into distinct, reusable layers. This separation keeps each concern focused, predictable, and testable.
+
+Use the `npm run new` command to generate starter code that satisfies the rules for all three component types.
+
+## Container components
+
+Containers are no-UI components that encapsulate accessibility behavior, keyboard interaction, and RTL awareness. They expose this logic through React [hooks](https://reactjs.org/docs/hooks-intro.html) or [render props](https://reactjs.org/docs/render-props.html) that are reused throughout `react-components` or can serve as the baseline for new component development beyond Garden.
+
+<Tip>
+  Learn more about Garden containers in the
+  [`react-containers`](https://github.com/zendeskgarden/react-containers) repo.
+</Tip>
+
+The `Accordion` element is a good real-world example. It calls `useAccordion` from `@zendeskgarden/container-accordion` to obtain the interaction props, then passes them down through context:
+
+```tsx accordion/Accordion.tsx
+import { useAccordion } from '@zendeskgarden/container-accordion';
+
+const AccordionComponent = forwardRef<HTMLDivElement, IAccordionProps>(
+  ({ sections, defaultExpandedSections, expandedSections, isCollapsible, isExpandable, onChange, ...other }, ref) => {
+    const { expandedSections: controlled, getHeaderProps, getTriggerProps, getPanelProps } = useAccordion({
+      sections,
+      defaultExpandedSections,
+      expandedSections,
+      collapsible: isCollapsible,
+      expandable: isExpandable || false,
+      onChange
+    });
+    // ...
+  }
+);
+```
+
+## View components
+
+Garden uses [`styled-components`](https://styled-components.com/) for all component CSS. View components are pure styled components — they do not return JSX (with the exception of embedded icons).
+
+### Rules
+
+- Styling supports the most canonical HTML form possible.
+- Components extend the most appropriate semantic HTML element, for example `const Button = styled.button`...``.
+- Analytics `attrs` are added for `data-garden-id` and `data-garden-version`.
+- [Concentric](https://github.com/brandon-rhodes/Concentric-CSS) CSS ordering is maintained with `stylelint`.
+
+### CSS grouping order
+
+CSS within a view component must be authored in the following order for optimal specificity:
+
+<Steps>
+  <Step title="Base properties">
+    Display, position, flex, transition, direction, and anything **not** related to size or color.
+  </Step>
+  <Step title="Size styles">
+    A `${sizeStyles}` function containing all size-related properties: margin, padding, width, height, line-height, font-size. All grouped ordering (including pseudos and children) applies within this function.
+  </Step>
+  <Step title="Pseudo-class base properties">
+    Non-color pseudo states in LVHFA order: `:hover`, `:focus`, `:active`.
+  </Step>
+  <Step title="Color styles">
+    A `${colorStyles}` function containing all color-related properties: border-color, background-color, color, box-shadow — including color modifications for pseudo states. All grouped ordering applies within this function.
+  </Step>
+  <Step title="Pseudo-element base properties">
+    Non-size, non-color properties for `::before` and `::after`.
+  </Step>
+  <Step title="Child component groupings">
+    `& > *` and `& ${StyledChild}` property groupings. Child styled components should contain all their CSS properties when possible.
+  </Step>
+  <Step title="Component override styles">
+    The last declaration is always `${componentStyles}`, which allows implementers to use the [`theme`](https://zendeskgarden.github.io/react-components/theming/) `components` object to override specific component styles.
+  </Step>
+</Steps>
+
+<Tip>
+  See
+  [StyledTag](https://github.com/zendeskgarden/react-components/blob/main/packages/tags/src/styled/StyledTag.ts)
+  for an ideal example of this ordering in practice.
+</Tip>
+
+## Element components
+
+Elements are high-abstraction wrappers that incorporate container hooks (as needed) for interaction and rely on view components for styling. These are the public interface for Garden.
+
+### Rules
+
+<AccordionGroup>
+  <Accordion title="forwardRef pattern">
+    All element components are created using
+    [`React.forwardRef`](https://reactjs.org/docs/react-api.html#reactforwardref)
+    to provide `ref` access to the underlying view component's DOM element.
+  </Accordion>
+  <Accordion title="Boolean prop naming">
+    Boolean props use `is[Prop]` / `has[Prop]` naming conventions to avoid conflicts with
+    DOM attribute names. Exceptions are props that map directly to HTML attributes such as
+    `disabled` or `hidden`.
+  </Accordion>
+  <Accordion title="displayName convention">
+    The `displayName` definition must be set to the exported component name. Subcomponents use
+    the `Element.SubElement` string construct (e.g., `'Accordion.Header'`).
+  </Accordion>
+  <Accordion title="PropTypes">
+    All API props must be set as `PropTypes` for runtime error checking.
+  </Accordion>
+  <Accordion title="One component per file">
+    Subcomponents must each reside in separate files. One component = one file.
+  </Accordion>
+</AccordionGroup>
+
+### Code structures
+
+The following examples show the three element structures used across Garden.
+
+<Tabs>
+  <Tab title="Simple element">
+    The simplest form of a Garden element component:
+
+    ```tsx
+    /**
+     * Copyright Zendesk, Inc.
+     *
+     * Use of this source code is governed under the Apache License, Version 2.0
+     * found at http://www.apache.org/licenses/LICENSE-2.0.
+     */
+
+    import React, { HTMLAttributes, forwardRef } from 'react';
+
+    /**
+     * @extends HTMLAttributes<HTMLElement>
+     */
+    export const SimpleComponent = forwardRef<HTMLAttributes<HTMLElement>>((props, ref) => (
+      <StyledSimpleElement ref={ref} {...props} />
+    ));
+
+    SimpleComponent.displayName = 'SimpleComponent';
+    ```
+
+    - Always add the `@extends` JSDoc to the export. The clause is extracted for website API documentation.
+    - `displayName` satisfies linter checks for runtime naming.
+  </Tab>
+  <Tab title="Subcomponent">
+    A subcomponent imported into the complex element below:
+
+    ```tsx
+    /**
+     * Copyright Zendesk, Inc.
+     *
+     * Use of this source code is governed under the Apache License, Version 2.0
+     * found at http://www.apache.org/licenses/LICENSE-2.0.
+     */
+
+    import React, { HTMLAttributes, forwardRef } from 'react';
+    import PropTypes from 'prop-types';
+    import { StyledSubElement } from '../styled';
+
+    export interface IElementSubElementProps extends HTMLAttributes<HTMLElement> {
+      /** Applies regular (non-bold) font weight */
+      isRegular?: boolean;
+    }
+
+    const SubElementComponent = forwardRef<IElementSubElementProps>((props, ref) => (
+      <StyledSubElement ref={ref} {...props} />
+    ));
+
+    SubElementComponent.displayName = 'Element.SubElement';
+
+    SubElementComponent.propTypes = {
+      isRegular: PropTypes.bool
+    };
+
+    /**
+     * @extends HTMLAttributes<HTMLElement>
+     */
+    export const SubElement = SubElementComponent;
+    ```
+
+    - The exported interface combines the parent element name with the subcomponent name.
+    - The internal `const` uses `XxxComponent` naming and is not exported due to a [Storybook displayName issue](https://github.com/storybookjs/storybook/issues/12263#issuecomment-1008870685).
+    - The `@extends` clause is always applied to the exported `const` so subcomponent props appear in Storybook.
+  </Tab>
+  <Tab title="Complex element">
+    A complex element with subcomponents as static properties:
+
+    ```tsx
+    /**
+     * Copyright Zendesk, Inc.
+     *
+     * Use of this source code is governed under the Apache License, Version 2.0
+     * found at http://www.apache.org/licenses/LICENSE-2.0.
+     */
+
+    import React, { HTMLAttributes, forwardRef } from 'react';
+    import PropTypes from 'prop-types';
+    import { SubElement } from './SubElement';
+    import { StyledElement } from '../styled';
+
+    export interface IElementProps extends HTMLAttributes<HTMLElement> {
+      /** Applies compact styling */
+      isCompact?: boolean;
+    }
+
+    const ElementComponent = forwardRef<HTMLElement, IElementProps>((props, ref) => (
+      <StyledElement ref={ref} {...props} />
+    ));
+
+    ElementComponent.displayName = 'Element';
+
+    ElementComponent.propTypes = {
+      isCompact: PropTypes.bool
+    };
+
+    /**
+     * @extends HTMLAttributes<HTMLElement>
+     */
+    export const Element = ElementComponent as typeof ElementComponent & {
+      SubElement: typeof SubElement;
+    };
+
+    Element.SubElement = SubElement;
+    ```
+
+    - Subcomponents reside in separate files and are imported explicitly.
+    - The non-exported `const` is a React functional component using `XxxComponent` naming.
+    - The component export uses type assertion to append subcomponent type information.
+    - Subcomponents are exposed via static property notation after the type is defined.
+  </Tab>
+</Tabs>
+
+### Real-world example: Accordion
+
+The `Accordion` component demonstrates all three layers in practice. It uses `useAccordion` (container), renders `StyledAccordion` (view), and exposes `Accordion.Header`, `Accordion.Label`, `Accordion.Panel`, and `Accordion.Section` as static subcomponents (element):
+
+```tsx accordion/Accordion.tsx
+export const Accordion = AccordionComponent as typeof AccordionComponent & {
+  Header: typeof Header;
+  Label: typeof Label;
+  Panel: typeof Panel;
+  Section: typeof Section;
+};
+
+Accordion.Header = Header;
+Accordion.Label = Label;
+Accordion.Panel = Panel;
+Accordion.Section = Section;
+```

@@ -1,0 +1,242 @@
+---
+title: "Avatars"
+description: "Avatar and StatusIndicator components for representing users, systems, and presence states in the Garden design system."
+---
+
+The `@zendeskgarden/react-avatars` package provides the `Avatar` and `StatusIndicator` components. Use `Avatar` to represent a user or system with an image, icon, or initials. Use `StatusIndicator` as a standalone presence badge.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-avatars
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-avatars
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-avatars
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+## Avatar
+
+`Avatar` renders a single child — an `<img>`, an SVG icon, or an `Avatar.Text` — inside a styled container. Wrap your app in `ThemeProvider` before using any Garden component.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Avatar } from '@zendeskgarden/react-avatars';
+
+const App = () => (
+  <ThemeProvider>
+    <Avatar>
+      <img src="/images/user.png" alt="Jane Doe" />
+    </Avatar>
+  </ThemeProvider>
+);
+```
+
+### Size
+
+The `size` prop controls the avatar dimensions. The default is `medium`.
+
+<Tabs>
+  <Tab title="Image">
+    ```tsx
+    <Avatar size="extraextrasmall">
+      <img src="/images/user.png" alt="Jane Doe" />
+    </Avatar>
+
+    <Avatar size="extrasmall">
+      <img src="/images/user.png" alt="Jane Doe" />
+    </Avatar>
+
+    <Avatar size="small">
+      <img src="/images/user.png" alt="Jane Doe" />
+    </Avatar>
+
+    <Avatar size="medium">
+      <img src="/images/user.png" alt="Jane Doe" />
+    </Avatar>
+
+    <Avatar size="large">
+      <img src="/images/user.png" alt="Jane Doe" />
+    </Avatar>
+    ```
+  </Tab>
+  <Tab title="Text">
+    ```tsx
+    <Avatar size="small" backgroundColor="background.emphasis" foregroundColor="foreground.onEmphasis">
+      <Avatar.Text>JD</Avatar.Text>
+    </Avatar>
+
+    <Avatar size="medium" backgroundColor="background.emphasis" foregroundColor="foreground.onEmphasis">
+      <Avatar.Text>JD</Avatar.Text>
+    </Avatar>
+
+    <Avatar size="large" backgroundColor="background.emphasis" foregroundColor="foreground.onEmphasis">
+      <Avatar.Text>JD</Avatar.Text>
+    </Avatar>
+    ```
+  </Tab>
+</Tabs>
+
+### Status
+
+Set the `status` prop to show a presence indicator on the avatar. When `status` is set, also provide a `statusLabel` for screen readers.
+
+```tsx
+<Avatar status="available" statusLabel="status: available">
+  <img src="/images/user.png" alt="Jane Doe" />
+</Avatar>
+
+<Avatar status="away" statusLabel="status: away">
+  <img src="/images/user.png" alt="Jane Doe" />
+</Avatar>
+
+<Avatar status="transfers" statusLabel="status: transfers">
+  <img src="/images/user.png" alt="Jane Doe" />
+</Avatar>
+
+<Avatar status="offline" statusLabel="status: offline">
+  <img src="/images/user.png" alt="Jane Doe" />
+</Avatar>
+```
+
+| Status value | Visual meaning |
+|---|---|
+| `available` | Green indicator — agent is online and available |
+| `away` | Yellow indicator with clock icon — agent is away |
+| `transfers` | Blue indicator with arrow icon — agent accepts transfers |
+| `offline` | Grey indicator — agent is offline |
+
+### Badge
+
+Set the `badge` prop to display a notification count. The `status` prop is overridden to `active` when `badge` is provided.
+
+```tsx
+<Avatar badge={3} statusLabel="status: active. 3 notifications">
+  <img src="/images/user.png" alt="Jane Doe" />
+</Avatar>
+
+<Avatar badge={0} statusLabel="status: active. no notifications">
+  <img src="/images/user.png" alt="Jane Doe" />
+</Avatar>
+```
+
+### System avatars
+
+Set `isSystem` to apply styling intended for objects, brands, or products rather than people.
+
+```tsx
+import ZendeskIcon from '@zendeskgarden/svg-icons/src/26/zendesk.svg';
+
+<Avatar isSystem backgroundColor="background.emphasis" foregroundColor="foreground.onEmphasis">
+  <ZendeskIcon />
+</Avatar>
+```
+
+### Avatar.Text
+
+Use `Avatar.Text` as the child of `Avatar` to display initials or short text.
+
+```tsx
+<Avatar backgroundColor="background.emphasis" foregroundColor="foreground.onEmphasis">
+  <Avatar.Text>GD</Avatar.Text>
+</Avatar>
+```
+
+### Props
+
+<ParamField path="size" type="'extraextrasmall' | 'extrasmall' | 'small' | 'medium' | 'large'" default="'medium'">
+  Sets the avatar dimensions.
+</ParamField>
+
+<ParamField path="status" type="'available' | 'away' | 'transfers' | 'offline'">
+  Applies a presence indicator to the avatar.
+</ParamField>
+
+<ParamField path="statusLabel" type="string">
+  Accessible label for the status indicator. Required when `status` is set and the avatar is not `aria-hidden`.
+</ParamField>
+
+<ParamField path="badge" type="string | number">
+  Displays a notification count and sets the status to `active`. Takes precedence over the `status` prop.
+</ParamField>
+
+<ParamField path="backgroundColor" type="string">
+  Sets the avatar background color. Accepts a theme color variable key (e.g. `background.emphasis`) or a hex value.
+</ParamField>
+
+<ParamField path="foregroundColor" type="string">
+  Sets the color for child SVG or `Avatar.Text` content. Accepts a theme color variable key (e.g. `foreground.onEmphasis`) or a hex value.
+</ParamField>
+
+<ParamField path="surfaceColor" type="string">
+  Provides a surface color for avatars placed on non-default backgrounds. Accepts a theme color variable key or a hex value.
+</ParamField>
+
+<ParamField path="isSystem" type="boolean">
+  Applies system styling for representing objects, brands, or products.
+</ParamField>
+
+---
+
+## StatusIndicator
+
+`StatusIndicator` is a standalone presence component — use it outside of an `Avatar` when you need to show a user's status alongside their name or in a list.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { StatusIndicator } from '@zendeskgarden/react-avatars';
+
+const App = () => (
+  <ThemeProvider>
+    <StatusIndicator type="available">Available</StatusIndicator>
+    <StatusIndicator type="away">Away</StatusIndicator>
+    <StatusIndicator type="transfers">Transfers</StatusIndicator>
+    <StatusIndicator type="offline">Offline</StatusIndicator>
+  </ThemeProvider>
+);
+```
+
+<Tip>
+  `StatusIndicator` renders a `role="status"` live region. Its icon uses `role="img"` with an auto-generated `aria-label` based on the `type` value. Override the label with the `aria-label` prop, or pass `null` to mark it as decorative.
+</Tip>
+
+### Compact styling
+
+Use `isCompact` to reduce the indicator size, for example inside dense list rows.
+
+```tsx
+<StatusIndicator type="available" isCompact>
+  Available
+</StatusIndicator>
+```
+
+### Props
+
+<ParamField path="type" type="'available' | 'away' | 'transfers' | 'offline'" default="'offline'">
+  Applies status styling and sets the default accessible label.
+</ParamField>
+
+<ParamField path="aria-label" type="string | null">
+  Overrides the auto-generated label. Pass `null` to mark the indicator as decorative and suppress the label.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact styling with smaller icons.
+</ParamField>

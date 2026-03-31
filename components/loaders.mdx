@@ -1,0 +1,227 @@
+---
+title: 'Loaders'
+description: 'Components for communicating loading state, including Skeleton, Spinner, Dots, Inline, and Progress.'
+keywords: ['loader', 'skeleton', 'spinner', 'dots', 'progress', 'loading', 'zendesk garden']
+---
+
+The `@zendeskgarden/react-loaders` package provides components for representing loading and progress states. All components require a `ThemeProvider` at the root of your application.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-loaders
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-loaders
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-loaders
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+---
+
+## Skeleton
+
+A placeholder that mimics the shape of content while it loads. Use `Skeleton` to reduce perceived load time and prevent layout shift.
+
+<Tip>
+  Stack multiple `Skeleton` elements with varying widths to approximate the shape of the content that will replace them.
+</Tip>
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Skeleton } from '@zendeskgarden/react-loaders';
+
+<ThemeProvider>
+  <Skeleton width="60%" />
+  <Skeleton width="80%" />
+  <Skeleton width="40%" />
+</ThemeProvider>
+```
+
+### Skeleton props
+
+<ParamField path="body.width" type="string">
+  Sets the width as a percentage of the parent element's width. For example, `'75%'`.
+</ParamField>
+
+<ParamField path="body.height" type="string">
+  Sets the height as a percentage of the parent element's height when height is not already inherited from `line-height`.
+</ParamField>
+
+<ParamField path="body.isLight" type="boolean">
+  Inverts the skeleton color for use on dark backgrounds.
+</ParamField>
+
+---
+
+## Spinner
+
+An animated circular indicator for indeterminate loading states. Use `Spinner` when an operation is in progress and the duration is unknown.
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Spinner } from '@zendeskgarden/react-loaders';
+
+<ThemeProvider>
+  <Spinner />
+</ThemeProvider>
+```
+
+### Spinner props
+
+<ParamField path="body.size" type="string">
+  Sets the height and width of the spinner in pixels. Inherits the parent element's font size by default.
+</ParamField>
+
+<ParamField path="body.color" type="string">
+  Sets the fill color. Accepts a Garden color variable key (for example, `'foreground.primary'`) or any hex value. Inherits the parent's `color` by default.
+</ParamField>
+
+<ParamField path="body.duration" type="number">
+  Sets the length of one animation cycle in milliseconds.
+</ParamField>
+
+<ParamField path="body.delayMS" type="number">
+  Delays rendering the spinner to avoid a flash during fast load times. Useful when the loading state may resolve quickly.
+</ParamField>
+
+---
+
+## Dots
+
+An animated three-dot indicator for indeterminate loading states. Use `Dots` as a compact alternative to `Spinner`, particularly inside buttons or inline text.
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Dots } from '@zendeskgarden/react-loaders';
+
+<ThemeProvider>
+  <Dots />
+</ThemeProvider>
+```
+
+### Dots props
+
+<ParamField path="body.size" type="string | number">
+  Sets the height and width of the dots in pixels. Inherits the parent element's font size by default.
+</ParamField>
+
+<ParamField path="body.color" type="string">
+  Sets the fill color. Accepts a Garden color variable key (for example, `'foreground.primary'`) or any hex value. Inherits the parent's `color` by default.
+</ParamField>
+
+<ParamField path="body.duration" type="number">
+  Sets the length of one animation cycle in milliseconds.
+</ParamField>
+
+<ParamField path="body.delayMS" type="number">
+  Delays rendering the dots to avoid a flash during fast load times.
+</ParamField>
+
+---
+
+## Inline
+
+A compact animated loader sized to fit inline with text content. Use `Inline` when you need a loader that visually integrates into a line of text or a small container.
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Inline } from '@zendeskgarden/react-loaders';
+
+<ThemeProvider>
+  <Inline />
+</ThemeProvider>
+```
+
+### Inline props
+
+<ParamField path="body.size" type="number">
+  Sets the width in pixels and scales the loader height proportionally.
+</ParamField>
+
+<ParamField path="body.color" type="string">
+  Sets the fill color. Accepts a Garden color variable key (for example, `'foreground.primary'`) or any hex value. Inherits the parent's `color` by default.
+</ParamField>
+
+---
+
+## Progress
+
+A determinate horizontal bar for communicating measurable progress. Use `Progress` when you know the percentage of a task that has been completed.
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Progress } from '@zendeskgarden/react-loaders';
+
+<ThemeProvider>
+  <Progress value={65} />
+</ThemeProvider>
+```
+
+### Controlled progress
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Progress } from '@zendeskgarden/react-loaders';
+import { useState, useEffect } from 'react';
+
+const [value, setValue] = useState(0);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setValue(prev => {
+      if (prev >= 100) {
+        clearInterval(interval);
+        return 100;
+      }
+      return prev + 10;
+    });
+  }, 500);
+
+  return () => clearInterval(interval);
+}, []);
+
+<ThemeProvider>
+  <Progress value={value} size="medium" />
+</ThemeProvider>
+```
+
+### Progress props
+
+<ParamField path="body.value" type="number">
+  The current progress as a number between `0` and `100`.
+</ParamField>
+
+<ParamField path="body.size" type="string" default="small">
+  Adjusts the height of the progress bar. Accepts `'small'`, `'medium'`, or `'large'`.
+</ParamField>
+
+<ParamField path="body.color" type="string">
+  Sets the foreground bar's fill color. Accepts a Garden color variable key (for example, `'border.primaryEmphasis'`) or any hex value. Defaults to the `border.successEmphasis` theme value.
+</ParamField>

@@ -1,0 +1,609 @@
+---
+title: 'Forms'
+description: 'Native form field components including text inputs, textareas, checkboxes, radios, toggles, range sliders, and file uploads.'
+keywords: ['forms', 'input', 'textarea', 'checkbox', 'radio', 'toggle', 'range', 'file upload', 'field']
+---
+
+The `@zendeskgarden/react-forms` package provides accessible, styled native form components. Every interactive element pairs with the `Field` wrapper to establish correct label, hint, and message relationships automatically.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-forms
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-forms
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-forms
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+## Field
+
+`Field` is the layout wrapper that provides accessible context to the input, label, hint, and message subcomponents. Place all form controls inside a `Field`.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Email address</Field.Label>
+    <Field.Hint>We will never share your email with anyone.</Field.Hint>
+    <Input placeholder="you@example.com" />
+    <Field.Message>Enter a valid email address.</Field.Message>
+  </Field>
+</ThemeProvider>
+```
+
+### Field subcomponents
+
+<ParamField path="Field.Label" type="LabelHTMLAttributes<HTMLLabelElement>">
+  The accessible label for the field. Visually displayed above the input.
+
+  <Expandable title="props">
+    <ParamField path="isRegular" type="boolean">
+      Applies regular (non-bold) font weight.
+    </ParamField>
+    <ParamField path="hidden" type="boolean">
+      Hides the label visually while keeping it accessible to screen readers.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField path="Field.Hint" type="HTMLAttributes<HTMLDivElement>">
+  Supplementary hint text displayed below the label.
+</ParamField>
+
+<ParamField path="Field.Message" type="HTMLAttributes<HTMLDivElement>">
+  Validation message displayed below the input.
+
+  <Expandable title="props">
+    <ParamField path="validation" type="'success' | 'warning' | 'error'">
+      Applies validation state styling and an icon.
+    </ParamField>
+    <ParamField path="validationLabel" type="string">
+      Sets the `aria-label` for the validation icon.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Input
+
+A styled text input that extends all native `<input>` attributes.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Full name</Field.Label>
+    <Input placeholder="Jane Smith" />
+  </Field>
+</ThemeProvider>
+```
+
+### Validation states
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Username</Field.Label>
+    <Input validation="error" defaultValue="taken_username" />
+    <Field.Message validation="error">
+      That username is already taken.
+    </Field.Message>
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+<ParamField path="isBare" type="boolean">
+  Removes borders and padding for use inside custom wrappers.
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies inset `box-shadow` styling on focus.
+</ParamField>
+
+<ParamField path="validation" type="'success' | 'warning' | 'error'">
+  Applies validation state styling.
+</ParamField>
+
+## MediaInput
+
+A text input with optional start and end icon slots. Useful for search fields, URL inputs, and inputs with action buttons.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, MediaInput } from '@zendeskgarden/react-forms';
+import SearchIcon from '@zendeskgarden/svg-icons/src/16/search-stroke.svg';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Search</Field.Label>
+    <MediaInput start={<SearchIcon />} placeholder="Search..." />
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="start" type="ReactElement">
+  Icon or element rendered at the start of the input.
+</ParamField>
+
+<ParamField path="end" type="ReactElement">
+  Icon or element rendered at the end of the input.
+</ParamField>
+
+<ParamField path="wrapperProps" type="object">
+  HTML attributes applied to the `FauxInput` wrapper element.
+</ParamField>
+
+<ParamField path="wrapperRef" type="Ref">
+  Ref applied to the `FauxInput` wrapper element.
+</ParamField>
+
+## Textarea
+
+A styled multi-line text input with optional auto-resize support.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Textarea } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Description</Field.Label>
+    <Textarea minRows={3} maxRows={8} placeholder="Describe the issue..." />
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="minRows" type="number">
+  Sets the minimum height in rows. Enables auto-resize when combined with `maxRows`.
+</ParamField>
+
+<ParamField path="maxRows" type="number">
+  Sets the maximum height in rows before the textarea scrolls.
+</ParamField>
+
+<ParamField path="isResizable" type="boolean">
+  Enables manual vertical resize. Mutually exclusive with auto-resize.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+<ParamField path="isBare" type="boolean">
+  Removes borders and padding.
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies inset `box-shadow` styling on focus.
+</ParamField>
+
+<ParamField path="validation" type="'success' | 'warning' | 'error'">
+  Applies validation state styling.
+</ParamField>
+
+## Checkbox
+
+A styled checkbox input. Wrap in `Field` for accessible label association.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Checkbox } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Checkbox>
+      <Field.Label>Subscribe to newsletter</Field.Label>
+    </Checkbox>
+  </Field>
+</ThemeProvider>
+```
+
+### Indeterminate state
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Checkbox } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Checkbox indeterminate>
+      <Field.Label>Select all items</Field.Label>
+    </Checkbox>
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="indeterminate" type="boolean">
+  Sets the checkbox to an [indeterminate](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#Indeterminate_state_checkboxes) visual state. Does not affect the `checked` value.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+## Radio
+
+A styled radio button input. Group multiple radios inside a `Fieldset` with a `Legend` for accessible grouping.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Fieldset, Field, Radio } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Fieldset>
+    <Fieldset.Legend>Preferred contact method</Fieldset.Legend>
+    <Field>
+      <Radio name="contact" value="email">
+        <Field.Label>Email</Field.Label>
+      </Radio>
+    </Field>
+    <Field>
+      <Radio name="contact" value="phone">
+        <Field.Label>Phone</Field.Label>
+      </Radio>
+    </Field>
+    <Field>
+      <Radio name="contact" value="sms">
+        <Field.Label>SMS</Field.Label>
+      </Radio>
+    </Field>
+  </Fieldset>
+</ThemeProvider>
+```
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+## Toggle
+
+A styled switch input with `role="switch"`. Use in place of a checkbox when the action takes immediate effect.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Toggle } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Toggle>
+      <Field.Label>Enable notifications</Field.Label>
+    </Toggle>
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+## Range
+
+A styled range slider input. The lower track fill updates automatically as the value changes.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Range } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Volume</Field.Label>
+    <Range min={0} max={100} step={5} defaultValue={40} />
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="min" type="number" default="0">
+  Minimum value of the range.
+</ParamField>
+
+<ParamField path="max" type="number" default="100">
+  Maximum value of the range.
+</ParamField>
+
+<ParamField path="step" type="number" default="1">
+  Step increment between values.
+</ParamField>
+
+## Select
+
+A styled native `<select>` element.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Select } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Country</Field.Label>
+    <Select>
+      <option value="us">United States</option>
+      <option value="ca">Canada</option>
+      <option value="gb">United Kingdom</option>
+    </Select>
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+<ParamField path="isBare" type="boolean">
+  Removes borders and padding.
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies inset `box-shadow` styling on focus.
+</ParamField>
+
+<ParamField path="validation" type="'success' | 'warning' | 'error'">
+  Applies validation state styling.
+</ParamField>
+
+## InputGroup
+
+Groups multiple inputs, buttons, or other elements into a single visual unit.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, InputGroup, Input } from '@zendeskgarden/react-forms';
+import { Button } from '@zendeskgarden/react-buttons';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Invite by email</Field.Label>
+    <InputGroup>
+      <Input placeholder="colleague@example.com" />
+      <Button isPrimary>Send</Button>
+    </InputGroup>
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing to all child inputs.
+</ParamField>
+
+## Fieldset
+
+Groups multiple related fields (checkboxes or radios) with an accessible legend.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Fieldset, Field, Checkbox } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Fieldset>
+    <Fieldset.Legend>Notification preferences</Fieldset.Legend>
+    <Field>
+      <Checkbox name="prefs" value="email">
+        <Field.Label>Email updates</Field.Label>
+      </Checkbox>
+    </Field>
+    <Field>
+      <Checkbox name="prefs" value="sms">
+        <Field.Label>SMS alerts</Field.Label>
+      </Checkbox>
+    </Field>
+  </Fieldset>
+</ThemeProvider>
+```
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact styling to all child inputs.
+</ParamField>
+
+## Tiles
+
+A radio-group alternative rendered as clickable tile cards. Useful for plan selectors, category pickers, and icon-based choices.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Tiles } from '@zendeskgarden/react-forms';
+import StarIcon from '@zendeskgarden/svg-icons/src/26/star-stroke.svg';
+
+<ThemeProvider>
+  <Tiles name="plan" onChange={e => console.log(e.target.value)}>
+    <Tiles.Tile value="starter">
+      <Tiles.Icon>
+        <StarIcon />
+      </Tiles.Icon>
+      <Tiles.Label>Starter</Tiles.Label>
+      <Tiles.Description>Up to 5 users</Tiles.Description>
+    </Tiles.Tile>
+    <Tiles.Tile value="pro">
+      <Tiles.Icon>
+        <StarIcon />
+      </Tiles.Icon>
+      <Tiles.Label>Pro</Tiles.Label>
+      <Tiles.Description>Unlimited users</Tiles.Description>
+    </Tiles.Tile>
+  </Tiles>
+</ThemeProvider>
+```
+
+<ParamField path="name" type="string" required>
+  The name attribute shared across all tile radio inputs.
+</ParamField>
+
+<ParamField path="value" type="string">
+  The selected value in a controlled `Tiles` component.
+</ParamField>
+
+<ParamField path="onChange" type="ChangeEventHandler<HTMLInputElement>">
+  Called when the selected tile changes.
+</ParamField>
+
+<ParamField path="isCentered" type="boolean" default="true">
+  Centers tile content horizontally and vertically.
+</ParamField>
+
+## FileUpload
+
+A drop zone wrapper for file input interactions. Works alongside `react-dropzone` or native input elements.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, FileUpload, FileList, File } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Attachments</Field.Label>
+    <FileUpload>
+      Drag files here or <span>browse</span>
+    </FileUpload>
+    <FileList>
+      <File type="pdf">report.pdf</File>
+    </FileList>
+  </Field>
+</ThemeProvider>
+```
+
+<ParamField path="isDragging" type="boolean">
+  Applies active drag styling when a file is being dragged over the drop zone.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Disables interaction.
+</ParamField>
+
+<Note>
+  `FileUpload` renders as a `role="button"` div for broad compatibility with drag-and-drop libraries like `react-dropzone`. Wire up drag events and input click handlers manually.
+</Note>
+
+## FauxInput
+
+A `div` that visually matches the `Input` component. Use it to build custom input-like containers that hold non-native elements.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { FauxInput } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <FauxInput isFocused={false} isHovered={false}>
+    Custom content
+  </FauxInput>
+</ThemeProvider>
+```
+
+<ParamField path="isFocused" type="boolean">
+  Applies focus styling.
+</ParamField>
+
+<ParamField path="isHovered" type="boolean">
+  Applies hover styling.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+<ParamField path="isBare" type="boolean">
+  Removes borders and padding.
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies inset `box-shadow` styling on focus.
+</ParamField>
+
+<ParamField path="readOnly" type="boolean">
+  Applies read-only styling.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Applies disabled styling.
+</ParamField>
+
+<ParamField path="validation" type="'success' | 'warning' | 'error'">
+  Applies validation state styling.
+</ParamField>
+
+## Validation states
+
+All input components accept a `validation` prop that applies visual feedback.
+
+<Tabs>
+  <Tab title="Success">
+    ```jsx
+    <Field>
+      <Field.Label>Password</Field.Label>
+      <Input validation="success" type="password" value="••••••••" readOnly />
+      <Field.Message validation="success">Password meets requirements.</Field.Message>
+    </Field>
+    ```
+  </Tab>
+  <Tab title="Warning">
+    ```jsx
+    <Field>
+      <Field.Label>Username</Field.Label>
+      <Input validation="warning" defaultValue="user_123" />
+      <Field.Message validation="warning">
+        Usernames with underscores may not display correctly everywhere.
+      </Field.Message>
+    </Field>
+    ```
+  </Tab>
+  <Tab title="Error">
+    ```jsx
+    <Field>
+      <Field.Label>Email</Field.Label>
+      <Input validation="error" defaultValue="not-an-email" />
+      <Field.Message validation="error">
+        Enter a valid email address.
+      </Field.Message>
+    </Field>
+    ```
+  </Tab>
+</Tabs>
+
+## Compact mode
+
+All form components accept an `isCompact` prop for use in dense interfaces. On `Fieldset` and `InputGroup`, the compact prop propagates to all child inputs automatically.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Input, Textarea } from '@zendeskgarden/react-forms';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Subject</Field.Label>
+    <Input isCompact placeholder="Brief summary" />
+  </Field>
+  <Field>
+    <Field.Label>Body</Field.Label>
+    <Textarea isCompact minRows={2} placeholder="Full message" />
+  </Field>
+</ThemeProvider>
+```

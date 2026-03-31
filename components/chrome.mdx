@@ -1,0 +1,109 @@
+---
+title: "Chrome"
+description: "Application shell layout components from @zendeskgarden/react-chrome."
+---
+
+<Warning>
+  The `Chrome` components (`Body`, `Content`, `Header`, `Main`, `Nav`) are **deprecated** for general use. Consider using the `Grid` or `Pane` components for new application layouts.
+</Warning>
+
+<CodeGroup>
+```bash npm
+npm install @zendeskgarden/react-chrome
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+```bash yarn
+yarn add @zendeskgarden/react-chrome
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+```bash pnpm
+pnpm add @zendeskgarden/react-chrome
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+</CodeGroup>
+
+## Chrome
+
+`Chrome` provides the outer shell of a Zendesk-style application layout, combining a side navigation bar with a main content body.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Chrome, Nav, Body, Header, Content, Main } from '@zendeskgarden/react-chrome';
+
+<ThemeProvider>
+  <Chrome>
+    <Nav isExpanded>
+      <Nav.Item hasLogo product="support" title="Zendesk Support">
+        <Nav.ItemIcon>
+          {/* product SVG icon */}
+        </Nav.ItemIcon>
+        <Nav.ItemText>Zendesk Support</Nav.ItemText>
+      </Nav.Item>
+      <Nav.List>
+        <Nav.Item isCurrent>
+          <Nav.ItemIcon>{/* home icon */}</Nav.ItemIcon>
+          <Nav.ItemText>Home</Nav.ItemText>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.ItemIcon>{/* views icon */}</Nav.ItemIcon>
+          <Nav.ItemText>Views</Nav.ItemText>
+        </Nav.Item>
+      </Nav.List>
+      <Nav.Item hasBrandmark>
+        <Nav.ItemIcon>{/* brandmark icon */}</Nav.ItemIcon>
+        <Nav.ItemText>Brandmark</Nav.ItemText>
+      </Nav.Item>
+    </Nav>
+    <Body>
+      <Header>Application header</Header>
+      <Content>
+        <Main>Main content area</Main>
+      </Content>
+    </Body>
+  </Chrome>
+</ThemeProvider>
+```
+
+## Components
+
+| Component | Description |
+|-----------|-------------|
+| `Chrome` | Root shell wrapper |
+| `Nav` | Vertical side navigation bar |
+| `Nav.List` | Container for nav items |
+| `Nav.Item` | Individual nav entry (supports `isCurrent`, `hasLogo`, `hasBrandmark`) |
+| `Nav.ItemIcon` | Icon slot within a nav item |
+| `Nav.ItemText` | Text label slot within a nav item |
+| `Body` | Main content wrapper adjacent to `Nav` |
+| `Header` | Top header bar inside `Body` |
+| `Content` | Scrollable content area below `Header` |
+| `Main` | Primary content column inside `Content` |
+| `Sidebar` | Optional secondary column inside `Content` |
+
+### Nav props
+
+<ParamField path="isExpanded" type="boolean">
+  Expands the nav to show item text labels alongside icons.
+</ParamField>
+
+### Nav.Item props
+
+<ParamField path="isCurrent" type="boolean">
+  Marks the item as the currently active navigation destination.
+</ParamField>
+
+<ParamField path="hasLogo" type="boolean">
+  Styles the item as a product logo entry at the top of the nav.
+</ParamField>
+
+<ParamField path="hasBrandmark" type="boolean">
+  Styles the item as a brandmark entry at the bottom of the nav.
+</ParamField>
+
+<ParamField path="product" type="string">
+  Sets the product color accent for logo items (e.g. `"support"`, `"chat"`).
+</ParamField>
+
+<Tip>
+  For new projects, use `Grid` and `Pane` for flexible layouts. Chrome is retained for compatibility with existing Zendesk product shells.
+</Tip>

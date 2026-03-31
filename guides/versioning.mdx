@@ -1,0 +1,59 @@
+---
+title: 'Versioning'
+description: 'Semantic versioning policy, release cadence, and dependency requirements for Garden packages.'
+keywords: ['versioning', 'semver', 'semantic versioning', 'release', 'backport', 'changelog', 'dependencies']
+---
+
+Garden components are distributed as individual packages published under the [@zendeskgarden](https://www.npmjs.com/org/zendeskgarden) npm namespace.
+
+## Semantic versioning
+
+Garden follows [semantic versioning](https://semver.org/).
+
+| Release type | When it's used | Cadence |
+|---|---|---|
+| **Patch** | Bug fixes | Upon approval |
+| **Minor** | New features | Weekly |
+| **Major** | Breaking changes | Once per quarter |
+
+All versions are recorded in the [changelog](https://github.com/zendeskgarden/react-components/blob/main/CHANGELOG.md) upon release.
+
+## Fixed version number
+
+Garden distributes packages under a [fixed](https://github.com/lerna/lerna#fixedlocked-mode-default) (common major) version number. All packages share the same major version, so a breaking change in any one package advances the major version across the entire collection.
+
+Each package may be individually upgraded, but it is best practice to keep all Garden dependencies at the same version.
+
+<Tip>
+  Run a dependency update tool such as [Renovate](https://renovatebot.com/) to keep Garden
+  packages up to date automatically. Garden uses Renovate internally for the same purpose.
+</Tip>
+
+## Backport policy
+
+While it is feasible to backport bug fixes to previous major versions, this is avoided whenever possible. The core Garden team reviews backport requests on a per-case basis.
+
+<Note>
+  Open an [issue](https://github.com/zendeskgarden/react-components/issues/new) with your
+  versioning concerns. The team will do its best to accommodate your needs.
+</Note>
+
+## Required dependencies
+
+All Garden components require the following shared peer dependencies:
+
+```bash
+npm install @zendeskgarden/react-theming react react-dom styled-components
+```
+
+| Package | Role |
+|---------|------|
+| `@zendeskgarden/react-theming` | Provides the Garden theme and `ThemeProvider` |
+| `react` | React peer dependency |
+| `react-dom` | React DOM peer dependency |
+| `styled-components` | CSS-in-JS styling engine |
+
+<Warning>
+  Garden v10 requires `styled-components ^6.0.0`. If you are upgrading from v9, see the
+  [Migration guide](/guides/migration) for details.
+</Warning>

@@ -1,0 +1,496 @@
+---
+title: 'Dropdowns'
+description: 'Accessible Combobox and Menu components for single-select, multi-select, autocomplete, and action menu patterns.'
+keywords: ['dropdown', 'combobox', 'select', 'multiselect', 'autocomplete', 'menu', 'option']
+---
+
+The `@zendeskgarden/react-dropdowns` package provides fully accessible, WAI-ARIA compliant combobox and menu components. Use `Combobox` for selection-based interactions and `Menu` for action-triggered menus.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-dropdowns
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-dropdowns
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-dropdowns
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+## Combobox
+
+`Combobox` is the primary selection component. It supports editable input, autocomplete, single and multi-select modes, option grouping, and validation states.
+
+### Basic select
+
+Use `isEditable={false}` to create a non-editable select-only combobox.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Combobox, Option } from '@zendeskgarden/react-dropdowns';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Assignee</Field.Label>
+    <Combobox isEditable={false}>
+      <Option value="alice" label="Alice Chen" />
+      <Option value="bob" label="Bob Martinez" />
+      <Option value="carol" label="Carol White" />
+    </Combobox>
+  </Field>
+</ThemeProvider>
+```
+
+### Autocomplete
+
+Set `isAutocomplete` to show the chevron and enable filtered-list behavior. Filtering logic is left to you — update the rendered `<Option>` list in response to `onChange`.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Combobox, Option } from '@zendeskgarden/react-dropdowns';
+import { useState } from 'react';
+
+const ALL_OPTIONS = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry'];
+
+function AutocompleteExample() {
+  const [options, setOptions] = useState(ALL_OPTIONS);
+
+  return (
+    <ThemeProvider>
+      <Field>
+        <Field.Label>Fruit</Field.Label>
+        <Combobox
+          isAutocomplete
+          placeholder="Type to filter..."
+          onChange={({ inputValue }) => {
+            if (inputValue !== undefined) {
+              setOptions(
+                ALL_OPTIONS.filter(o =>
+                  o.toLowerCase().includes(inputValue.toLowerCase())
+                )
+              );
+            }
+          }}
+        >
+          {options.map(fruit => (
+            <Option key={fruit} value={fruit} />
+          ))}
+        </Combobox>
+      </Field>
+    </ThemeProvider>
+  );
+}
+```
+
+### Multi-select
+
+Set `isMultiselectable` to allow selecting multiple options. Selected values render as removable tags inside the combobox.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Combobox, Option } from '@zendeskgarden/react-dropdowns';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Tags</Field.Label>
+    <Combobox isMultiselectable isEditable={false} placeholder="Select tags...">
+      <Option value="bug" label="Bug" />
+      <Option value="feature" label="Feature" />
+      <Option value="enhancement" label="Enhancement" />
+      <Option value="documentation" label="Documentation" />
+    </Combobox>
+  </Field>
+</ThemeProvider>
+```
+
+### Grouped options
+
+Use `OptGroup` to visually group related options with a section label.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Combobox, Option, OptGroup } from '@zendeskgarden/react-dropdowns';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Time zone</Field.Label>
+    <Combobox isEditable={false}>
+      <OptGroup legend="Americas">
+        <Option value="America/New_York" label="Eastern Time" />
+        <Option value="America/Chicago" label="Central Time" />
+        <Option value="America/Denver" label="Mountain Time" />
+        <Option value="America/Los_Angeles" label="Pacific Time" />
+      </OptGroup>
+      <OptGroup legend="Europe">
+        <Option value="Europe/London" label="London" />
+        <Option value="Europe/Paris" label="Paris" />
+        <Option value="Europe/Berlin" label="Berlin" />
+      </OptGroup>
+    </Combobox>
+  </Field>
+</ThemeProvider>
+```
+
+### Validation
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Field, Combobox, Option } from '@zendeskgarden/react-dropdowns';
+
+<ThemeProvider>
+  <Field>
+    <Field.Label>Priority</Field.Label>
+    <Field.Hint>Required for all new tickets.</Field.Hint>
+    <Combobox isEditable={false} validation="error">
+      <Option value="low" label="Low" />
+      <Option value="normal" label="Normal" />
+      <Option value="high" label="High" />
+      <Option value="urgent" label="Urgent" />
+    </Combobox>
+    <Field.Message validation="error">Select a priority level.</Field.Message>
+  </Field>
+</ThemeProvider>
+```
+
+### Combobox props
+
+<ParamField path="isEditable" type="boolean" default="true">
+  Allows the user to type in the input. Set to `false` for a select-only combobox.
+</ParamField>
+
+<ParamField path="isAutocomplete" type="boolean">
+  Indicates that the combobox provides autocompletion. Displays a chevron icon.
+</ParamField>
+
+<ParamField path="isMultiselectable" type="boolean">
+  Allows selecting multiple options. Selected values render as tags.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact sizing.
+</ParamField>
+
+<ParamField path="isBare" type="boolean">
+  Removes borders and padding.
+</ParamField>
+
+<ParamField path="isDisabled" type="boolean">
+  Disables all interaction.
+</ParamField>
+
+<ParamField path="placeholder" type="string">
+  Placeholder text displayed when no value is selected.
+</ParamField>
+
+<ParamField path="inputValue" type="string">
+  Controls the input value in a controlled combobox.
+</ParamField>
+
+<ParamField path="selectionValue" type="string | string[]">
+  Controls the selected value(s) in a controlled combobox.
+</ParamField>
+
+<ParamField path="isExpanded" type="boolean">
+  Controls listbox expansion in a controlled combobox.
+</ParamField>
+
+<ParamField path="defaultExpanded" type="boolean">
+  Default expansion state in an uncontrolled combobox.
+</ParamField>
+
+<ParamField path="maxTags" type="number" default="4">
+  Maximum number of tags visible when the multiselectable combobox is collapsed.
+</ParamField>
+
+<ParamField path="listboxMaxHeight" type="string" default="400px">
+  Maximum height of the dropdown listbox.
+</ParamField>
+
+<ParamField path="listboxZIndex" type="number" default="1000">
+  `z-index` of the listbox overlay.
+</ParamField>
+
+<ParamField path="startIcon" type="ReactElement">
+  Icon displayed at the start of the input.
+</ParamField>
+
+<ParamField path="endIcon" type="ReactElement">
+  Icon displayed at the end of the input (hidden when the chevron is shown).
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies inset `box-shadow` styling on focus.
+</ParamField>
+
+<ParamField path="validation" type="'success' | 'warning' | 'error'">
+  Applies validation state styling.
+</ParamField>
+
+<ParamField path="onChange" type="function">
+  Called when combobox state changes. Receives `{ type, isExpanded?, selectionValue?, inputValue?, activeIndex? }`.
+</ParamField>
+
+<ParamField path="renderValue" type="function">
+  Overrides the displayed value when the combobox is collapsed. Receives `{ selection, inputValue }`.
+</ParamField>
+
+<ParamField path="renderExpandTags" type="(value: number) => string">
+  Overrides the "+ N more" text displayed when hidden tags exceed `maxTags`.
+</ParamField>
+
+<ParamField path="listboxAppendToNode" type="Element | DocumentFragment">
+  Renders the listbox in a portal attached to the specified DOM node.
+</ParamField>
+
+<ParamField path="listboxAriaLabel" type="string" default="Options">
+  Accessible label for the listbox element.
+</ParamField>
+
+## Option
+
+Individual selectable item within a `Combobox` listbox.
+
+<ParamField path="value" type="string" required>
+  The unique value returned on selection.
+</ParamField>
+
+<ParamField path="label" type="string">
+  Display text for the option. Defaults to the `value` if not provided.
+</ParamField>
+
+<ParamField path="isDisabled" type="boolean">
+  Disables interaction for this option.
+</ParamField>
+
+<ParamField path="isSelected" type="boolean">
+  Sets the initial selection state.
+</ParamField>
+
+<ParamField path="isHidden" type="boolean">
+  Hides the option while retaining its selection state (useful for filtered autocomplete).
+</ParamField>
+
+<ParamField path="icon" type="ReactElement">
+  Icon displayed before the option label.
+</ParamField>
+
+<ParamField path="type" type="'add' | 'danger' | 'next' | 'previous'">
+  Applies a semantic type style to the option.
+</ParamField>
+
+<ParamField path="tagProps" type="object">
+  Overrides props for the tag rendered in a multiselectable combobox.
+</ParamField>
+
+## OptGroup
+
+Groups options within a `Combobox` listbox with an accessible label.
+
+<ParamField path="legend" type="string">
+  Text label for the group.
+</ParamField>
+
+<ParamField path="icon" type="ReactElement">
+  Icon displayed before the group label.
+</ParamField>
+
+<ParamField path="content" type="ReactNode">
+  Custom content for the group header. Overrides `legend`.
+</ParamField>
+
+## Menu
+
+`Menu` renders a trigger button that opens a positioned action menu. Use it for context menus, action lists, and navigation dropdowns.
+
+### Basic menu
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Menu, Item } from '@zendeskgarden/react-dropdowns';
+
+<ThemeProvider>
+  <Menu
+    button="Actions"
+    onChange={({ selectedItems }) => {
+      const [selected] = selectedItems;
+      console.log('Selected:', selected?.value);
+    }}
+  >
+    <Item value="edit" label="Edit" />
+    <Item value="duplicate" label="Duplicate" />
+    <Item value="archive" label="Archive" />
+    <Item value="delete" label="Delete" type="danger" />
+  </Menu>
+</ThemeProvider>
+```
+
+### Menu with groups and separators
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Menu, Item, ItemGroup, Separator } from '@zendeskgarden/react-dropdowns';
+
+<ThemeProvider>
+  <Menu button="File">
+    <ItemGroup legend="Document">
+      <Item value="new" label="New" />
+      <Item value="open" label="Open" />
+    </ItemGroup>
+    <Separator />
+    <Item value="save" label="Save" />
+    <Item value="save-as" label="Save as..." />
+    <Separator />
+    <Item value="close" label="Close" type="danger" />
+  </Menu>
+</ThemeProvider>
+```
+
+### Custom trigger
+
+Pass a render function to `button` to use a custom trigger element instead of Garden's default `Button`.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Menu, Item } from '@zendeskgarden/react-dropdowns';
+import { IconButton } from '@zendeskgarden/react-buttons';
+import OverflowIcon from '@zendeskgarden/svg-icons/src/16/overflow-stroke.svg';
+
+<ThemeProvider>
+  <Menu
+    button={(props, ref) => (
+      <IconButton aria-label="More options" {...props} ref={ref}>
+        <OverflowIcon />
+      </IconButton>
+    )}
+  >
+    <Item value="edit" label="Edit" />
+    <Item value="delete" label="Delete" type="danger" />
+  </Menu>
+</ThemeProvider>
+```
+
+### Menu props
+
+<ParamField path="button" type="string | function" required>
+  Text label for the default trigger `Button`, or a render function that receives button props and a ref to render a custom trigger.
+</ParamField>
+
+<ParamField path="buttonProps" type="IButtonProps">
+  Additional props passed to the trigger `Button` when `button` is a string.
+</ParamField>
+
+<ParamField path="placement" type="string" default="bottom-start">
+  Adjusts the position of the menu relative to its trigger. Accepts any Garden placement value.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact styling to the menu and trigger.
+</ParamField>
+
+<ParamField path="maxHeight" type="string" default="400px">
+  Maximum height of the menu before it scrolls.
+</ParamField>
+
+<ParamField path="hasArrow" type="boolean">
+  Attaches an arrow pointing toward the trigger element.
+</ParamField>
+
+<ParamField path="isExpanded" type="boolean">
+  Controls menu expansion in a controlled menu.
+</ParamField>
+
+<ParamField path="defaultExpanded" type="boolean">
+  Default expansion state in an uncontrolled menu.
+</ParamField>
+
+<ParamField path="selectedItems" type="ISelectedItem[]">
+  Controls selected items in a controlled menu.
+</ParamField>
+
+<ParamField path="zIndex" type="number" default="1000">
+  `z-index` of the menu overlay.
+</ParamField>
+
+<ParamField path="onChange" type="function">
+  Called on menu state changes. Receives `{ type, isExpanded?, selectedItems?, focusedValue? }`.
+</ParamField>
+
+<ParamField path="restoreFocus" type="boolean">
+  Returns keyboard focus to the trigger element when the menu closes.
+</ParamField>
+
+## Item
+
+Individual item within a `Menu`.
+
+<ParamField path="value" type="string" required>
+  Unique value returned on selection.
+</ParamField>
+
+<ParamField path="label" type="string">
+  Display text for the item. Defaults to `value`.
+</ParamField>
+
+<ParamField path="icon" type="ReactElement">
+  Icon displayed before the item label.
+</ParamField>
+
+<ParamField path="type" type="'add' | 'danger' | 'next' | 'previous'">
+  Applies a semantic type style. Use `'danger'` for destructive actions.
+</ParamField>
+
+<ParamField path="isDisabled" type="boolean">
+  Disables interaction for this item.
+</ParamField>
+
+<ParamField path="isSelected" type="boolean">
+  Sets the initial selection state.
+</ParamField>
+
+<ParamField path="href" type="string">
+  Renders the item as an anchor element.
+</ParamField>
+
+<ParamField path="isExternal" type="boolean">
+  Opens the `href` in a new tab when the item is rendered as an anchor.
+</ParamField>
+
+<ParamField path="name" type="string">
+  Associates the item in a radio-style item group.
+</ParamField>
+
+## ItemGroup
+
+Groups `Item` elements within a `Menu` with an optional label.
+
+<ParamField path="legend" type="string">
+  Text label for the item group.
+</ParamField>
+
+<ParamField path="icon" type="ReactElement">
+  Icon displayed before the group label.
+</ParamField>
+
+<ParamField path="type" type="string">
+  Configures the selection type for items in the group (e.g., radio).
+</ParamField>
+
+<Note>
+  The legacy `@zendeskgarden/react-dropdowns.legacy` package is deprecated. Migrate to `@zendeskgarden/react-dropdowns@^9.0.0` to use the `Combobox` and `Menu` components documented here.
+</Note>

@@ -1,0 +1,223 @@
+---
+title: "Installation"
+description: "Install Garden React components and set up ThemeProvider in your React application."
+---
+
+Garden React components are published as individual packages under the `@zendeskgarden` npm scope. Every package can be installed independently so you only pull in what you use.
+
+<Note>
+  **v10 update:** Garden v10 introduces a single unified `@zendeskgarden/react-components` package as an alternative to installing individual packages. Both approaches are supported — use whichever fits your project.
+</Note>
+
+## Prerequisites
+
+Before installing Garden components, make sure your project meets these requirements:
+
+- **React** `^16.8.0`, `^17.0.0`, `^18.0.0`, or `^19.0.0`
+- **react-dom** matching your React version
+- **styled-components** `^6.0.0`
+
+All Garden component packages declare `react`, `react-dom`, and `styled-components` as peer dependencies. You need to have them installed in your project.
+
+## Install peer dependencies
+
+If you haven't already, install the required peer dependencies:
+
+<CodeGroup>
+
+```bash npm
+npm install react react-dom styled-components
+```
+
+```bash yarn
+yarn add react react-dom styled-components
+```
+
+```bash pnpm
+pnpm add react react-dom styled-components
+```
+
+</CodeGroup>
+
+## Install Garden packages
+
+<Steps>
+  <Step title="Install the theming package">
+    Every Garden component depends on `@zendeskgarden/react-theming`. Install it first:
+
+    <CodeGroup>
+
+    ```bash npm
+    npm install @zendeskgarden/react-theming
+    ```
+
+    ```bash yarn
+    yarn add @zendeskgarden/react-theming
+    ```
+
+    ```bash pnpm
+    pnpm add @zendeskgarden/react-theming
+    ```
+
+    </CodeGroup>
+  </Step>
+
+  <Step title="Install component packages">
+    Install the component packages you need. For example, to use buttons:
+
+    <CodeGroup>
+
+    ```bash npm
+    npm install @zendeskgarden/react-buttons
+    ```
+
+    ```bash yarn
+    yarn add @zendeskgarden/react-buttons
+    ```
+
+    ```bash pnpm
+    pnpm add @zendeskgarden/react-buttons
+    ```
+
+    </CodeGroup>
+
+    Each package follows the same pattern: `@zendeskgarden/react-<name>`. See the [full package list](#available-packages) below.
+  </Step>
+
+  <Step title="Wrap your app in ThemeProvider">
+    Place a single `ThemeProvider` at the root of your application. All Garden components must be rendered inside a `ThemeProvider`.
+
+    ```tsx
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { ThemeProvider } from '@zendeskgarden/react-theming';
+    import { Button } from '@zendeskgarden/react-buttons';
+
+    const App = () => (
+      <ThemeProvider>
+        <Button>Example Garden button</Button>
+      </ThemeProvider>
+    );
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+    ```
+
+    <Tip>
+      `ThemeProvider` can also be nested for scoped theming — for example, wrapping a subsection of your app in a separate `ThemeProvider` with a different accent color.
+    </Tip>
+  </Step>
+</Steps>
+
+## v10: unified package
+
+Starting with v10, you can install the single `@zendeskgarden/react-components` package instead of individual packages:
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-components
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-components
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-components
+```
+
+</CodeGroup>
+
+The unified package re-exports all components from one entry point:
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Button } from '@zendeskgarden/react-components';
+
+const App = () => (
+  <ThemeProvider>
+    <Button>Example Garden button</Button>
+  </ThemeProvider>
+);
+```
+
+<Note>
+  The unified `@zendeskgarden/react-components` package still requires `@zendeskgarden/react-theming`, `react`, `react-dom`, and `styled-components` as peer dependencies.
+</Note>
+
+## Minimal working example
+
+Here is a complete minimal app using Garden buttons with the `ThemeProvider`:
+
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const App = () => (
+  <ThemeProvider>
+    <>
+      <Button onClick={() => alert('clicked')}>Default</Button>
+      <Button isPrimary isDanger>
+        Primary danger button
+      </Button>
+    </>
+  </ThemeProvider>
+);
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+## Available packages
+
+Garden ships components as independently versioned packages. All packages are distributed under a fixed (common major) version number.
+
+| Package | Description |
+| --- | --- |
+| `@zendeskgarden/react-theming` | ThemeProvider, ColorSchemeProvider, DEFAULT_THEME |
+| `@zendeskgarden/react-accordions` | Accordion, Stepper |
+| `@zendeskgarden/react-avatars` | Avatar |
+| `@zendeskgarden/react-breadcrumbs` | Breadcrumb |
+| `@zendeskgarden/react-buttons` | Button, Anchor, IconButton, ToggleButton |
+| `@zendeskgarden/react-chrome` | Chrome, Body, Header, Nav, Sheet |
+| `@zendeskgarden/react-colorpickers` | Colorpicker, ColorpickerDialog |
+| `@zendeskgarden/react-datepickers` | Datepicker, DatepickerRange |
+| `@zendeskgarden/react-draggable` | Draggable, DraggableList |
+| `@zendeskgarden/react-dropdowns` | Combobox, Multiselect, Select, Menu |
+| `@zendeskgarden/react-forms` | Field, Input, Textarea, Checkbox, Radio, Toggle |
+| `@zendeskgarden/react-grid` | Grid, Row, Col |
+| `@zendeskgarden/react-loaders` | Dots, Spinner, Skeleton |
+| `@zendeskgarden/react-modals` | Modal, Drawer |
+| `@zendeskgarden/react-notifications` | Alert, Notification, Well, ToastProvider |
+| `@zendeskgarden/react-pagination` | Pagination, CursorPagination |
+| `@zendeskgarden/react-tabs` | Tabs, TabList, Tab, TabPanel |
+| `@zendeskgarden/react-tables` | Table, Head, HeaderRow, HeaderCell, Body, Row, Cell |
+| `@zendeskgarden/react-tags` | Tag |
+| `@zendeskgarden/react-tooltips` | Tooltip |
+| `@zendeskgarden/react-typography` | Paragraph, Span, LG, MD, SM, XL, XXL, XXXL |
+
+<Tip>
+  Keep all `@zendeskgarden` packages at the same major version. Garden practices fixed (common major) versioning — packages are designed to work together at the same version.
+</Tip>
+
+## Versioning
+
+Garden packages follow [semantic versioning](https://semver.org/):
+
+- **Patch** releases contain bug fixes and are deployed on approval.
+- **Minor** releases contain new features and are deployed weekly.
+- **Major** releases contain breaking changes and are deployed quarterly.
+
+All releases are recorded in the [changelog](https://github.com/zendeskgarden/react-components/blob/main/CHANGELOG.md).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Theming" icon="palette" href="/theming">
+    Customize colors, fonts, and component styles with ThemeProvider.
+  </Card>
+  <Card title="Components" icon="grid-2" href="/components/buttons">
+    Browse the full library of accessible, production-ready components.
+  </Card>
+</CardGroup>

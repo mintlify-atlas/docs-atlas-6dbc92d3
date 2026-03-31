@@ -1,0 +1,283 @@
+---
+title: 'Modals'
+description: 'Components for presenting content in an overlay layer, including Modal, Drawer, and TooltipDialog.'
+keywords: ['modal', 'drawer', 'tooltip dialog', 'overlay', 'dialog', 'zendesk garden']
+---
+
+The `@zendeskgarden/react-modals` package provides components for rendering overlay content above the main page. All components require a `ThemeProvider` at the root of your application.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-modals
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-modals
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-modals
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+---
+
+## Modal
+
+A dialog overlay that traps focus and renders via a portal. Use `Modal` for confirmation dialogs, forms, or any content that requires the user's attention before continuing.
+
+`Modal` composes the following subcomponents:
+
+- `Modal.Header` — title area at the top of the modal
+- `Modal.Body` — scrollable content area
+- `Modal.Footer` — action bar at the bottom
+- `Modal.FooterItem` — wraps individual actions inside the footer
+- `Modal.Close` — accessible close button
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Modal } from '@zendeskgarden/react-modals';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const [isOpen, setIsOpen] = useState(false);
+
+<ThemeProvider>
+  <Button onClick={() => setIsOpen(true)}>Open modal</Button>
+
+  {isOpen && (
+    <Modal onClose={() => setIsOpen(false)}>
+      <Modal.Header>Confirm action</Modal.Header>
+      <Modal.Body>Are you sure you want to continue?</Modal.Body>
+      <Modal.Footer>
+        <Modal.FooterItem>
+          <Button isBasic onClick={() => setIsOpen(false)}>
+            Cancel
+          </Button>
+        </Modal.FooterItem>
+        <Modal.FooterItem>
+          <Button isPrimary onClick={() => setIsOpen(false)}>
+            Confirm
+          </Button>
+        </Modal.FooterItem>
+      </Modal.Footer>
+      <Modal.Close aria-label="Close modal" />
+    </Modal>
+  )}
+</ThemeProvider>
+```
+
+### Modal props
+
+<ParamField path="body.onClose" type="(event: KeyboardEvent | MouseEvent) => void">
+  Handles close actions triggered from the backdrop or the close button.
+</ParamField>
+
+<ParamField path="body.isCentered" type="boolean" default="true">
+  Centers the modal vertically and horizontally on the backdrop.
+</ParamField>
+
+<ParamField path="body.isAnimated" type="boolean" default="true">
+  Animates the modal entrance and exit.
+</ParamField>
+
+<ParamField path="body.isLarge" type="boolean">
+  Applies a wider layout to the modal.
+</ParamField>
+
+<ParamField path="body.backdropProps" type="HTMLAttributes<HTMLDivElement>">
+  Passes HTML attributes directly to the backdrop element.
+</ParamField>
+
+<ParamField path="body.appendToNode" type="Element">
+  Defines the DOM element the modal portal attaches to. Defaults to `document.body`.
+</ParamField>
+
+<ParamField path="body.focusOnMount" type="boolean">
+  Directs keyboard focus to the modal when it mounts.
+</ParamField>
+
+<ParamField path="body.restoreFocus" type="boolean">
+  Returns keyboard focus to the element that triggered the modal on close.
+</ParamField>
+
+### Modal.Header props
+
+<ParamField path="body.isDanger" type="boolean">
+  Applies danger (destructive action) styling to the header.
+</ParamField>
+
+<ParamField path="body.tag" type="any">
+  Overrides the rendered HTML element tag.
+</ParamField>
+
+---
+
+## Drawer
+
+A panel that slides in from the side of the viewport. Use `Drawer` for navigation, filters, or supplemental content that coexists with the main page.
+
+`Drawer` composes the following subcomponents:
+
+- `Drawer.Header` — title area
+- `Drawer.Body` — scrollable content area
+- `Drawer.Footer` — action bar at the bottom
+- `Drawer.FooterItem` — wraps individual actions inside the footer
+- `Drawer.Close` — accessible close button
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Drawer } from '@zendeskgarden/react-modals';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const [isOpen, setIsOpen] = useState(false);
+
+<ThemeProvider>
+  <Button onClick={() => setIsOpen(true)}>Open drawer</Button>
+
+  <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
+    <Drawer.Header>Settings</Drawer.Header>
+    <Drawer.Body>Adjust your preferences here.</Drawer.Body>
+    <Drawer.Footer>
+      <Drawer.FooterItem>
+        <Button onClick={() => setIsOpen(false)}>Done</Button>
+      </Drawer.FooterItem>
+    </Drawer.Footer>
+    <Drawer.Close aria-label="Close drawer" />
+  </Drawer>
+</ThemeProvider>
+```
+
+### Drawer props
+
+<ParamField path="body.isOpen" type="boolean">
+  Controls whether the drawer is visible.
+</ParamField>
+
+<ParamField path="body.onClose" type="(event: KeyboardEvent | MouseEvent) => void">
+  Handles close actions triggered from the backdrop or the close button.
+</ParamField>
+
+<ParamField path="body.backdropProps" type="HTMLAttributes<HTMLDivElement>">
+  Passes HTML attributes directly to the backdrop element.
+</ParamField>
+
+<ParamField path="body.appendToNode" type="Element">
+  Defines the DOM element the drawer portal attaches to. Defaults to `document.body`.
+</ParamField>
+
+<ParamField path="body.focusOnMount" type="boolean" default="true">
+  Directs keyboard focus to the drawer when it opens.
+</ParamField>
+
+<ParamField path="body.restoreFocus" type="boolean" default="true">
+  Returns keyboard focus to the triggering element when the drawer closes.
+</ParamField>
+
+---
+
+## TooltipDialog
+
+A positioned dialog anchored to a reference element. Use `TooltipDialog` for contextual help, guided flows, or confirmation prompts attached to a specific UI element.
+
+`TooltipDialog` composes the following subcomponents:
+
+- `TooltipDialog.Title` — heading at the top of the dialog
+- `TooltipDialog.Body` — content area
+- `TooltipDialog.Footer` — action bar
+- `TooltipDialog.FooterItem` — wraps individual actions inside the footer
+- `TooltipDialog.Close` — accessible close button
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { TooltipDialog } from '@zendeskgarden/react-modals';
+import { Button } from '@zendeskgarden/react-buttons';
+import { useRef, useState } from 'react';
+
+const [isOpen, setIsOpen] = useState(false);
+const buttonRef = useRef(null);
+
+<ThemeProvider>
+  <Button ref={buttonRef} onClick={() => setIsOpen(!isOpen)}>
+    Open tooltip dialog
+  </Button>
+
+  <TooltipDialog
+    referenceElement={isOpen && buttonRef.current ? buttonRef.current : undefined}
+    onClose={() => setIsOpen(false)}
+    placement="bottom"
+    hasArrow
+  >
+    <TooltipDialog.Title>Need help?</TooltipDialog.Title>
+    <TooltipDialog.Body>Here is some contextual guidance.</TooltipDialog.Body>
+    <TooltipDialog.Footer>
+      <TooltipDialog.FooterItem>
+        <Button onClick={() => setIsOpen(false)}>Got it</Button>
+      </TooltipDialog.FooterItem>
+    </TooltipDialog.Footer>
+    <TooltipDialog.Close aria-label="Close" />
+  </TooltipDialog>
+</ThemeProvider>
+```
+
+### TooltipDialog props
+
+<ParamField path="body.referenceElement" type="HTMLElement | null">
+  The element the dialog is anchored to. When `undefined`, the dialog is not rendered.
+</ParamField>
+
+<ParamField path="body.placement" type="string" default="auto">
+  Controls the preferred placement of the dialog relative to the reference element. Accepts `'auto'`, `'top'`, `'top-start'`, `'top-end'`, `'bottom'`, `'bottom-start'`, `'bottom-end'`, `'end'`, `'end-top'`, `'end-bottom'`, `'start'`, `'start-top'`, `'start-bottom'`.
+</ParamField>
+
+<ParamField path="body.hasArrow" type="boolean">
+  Adds a directional arrow pointing to the reference element.
+</ParamField>
+
+<ParamField path="body.fallbackPlacements" type="Placement[]">
+  A list of fallback placements to use when the preferred placement has insufficient space.
+</ParamField>
+
+<ParamField path="body.onClose" type="(event: KeyboardEvent | MouseEvent) => void">
+  Handles close actions triggered from the backdrop or the close button.
+</ParamField>
+
+<ParamField path="body.isAnimated" type="boolean" default="true">
+  Animates the dialog entrance and exit.
+</ParamField>
+
+<ParamField path="body.keepMounted" type="boolean">
+  Keeps the dialog content in the DOM when closed instead of unmounting it.
+</ParamField>
+
+<ParamField path="body.zIndex" type="number">
+  Sets the `z-index` of the dialog.
+</ParamField>
+
+<ParamField path="body.appendToNode" type="Element">
+  Defines the DOM element the dialog portal attaches to. Defaults to `document.body`.
+</ParamField>
+
+### TooltipDialog.Title props
+
+<ParamField path="body.tag" type="any">
+  Overrides the rendered HTML element tag.
+</ParamField>

@@ -1,0 +1,352 @@
+---
+title: 'Tables'
+description: 'Accessible table components for displaying structured data with support for sorting, selection, and overflow actions.'
+keywords: ['table', 'sortable', 'data table', 'header', 'row', 'cell', 'overflow']
+---
+
+The `@zendeskgarden/react-tables` package provides a composable set of table components. Build data tables with sticky headers, sortable columns, row selection, overflow menus, and more.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-tables
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-tables
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-tables
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+<Note>
+  Place a `ThemeProvider` from `@zendeskgarden/react-theming` at the root of your React application. All Garden components must be rendered inside a `ThemeProvider`.
+</Note>
+
+## Usage
+
+### Basic table
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Table } from '@zendeskgarden/react-tables';
+
+const Example = () => (
+  <ThemeProvider>
+    <Table>
+      <Table.Caption>Your unsolved tickets</Table.Caption>
+      <Table.Head>
+        <Table.HeaderRow>
+          <Table.HeaderCell>Subject</Table.HeaderCell>
+          <Table.HeaderCell>Requester</Table.HeaderCell>
+          <Table.HeaderCell>Requested</Table.HeaderCell>
+          <Table.HeaderCell>Type</Table.HeaderCell>
+        </Table.HeaderRow>
+      </Table.Head>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell>Where are my shoes?</Table.Cell>
+          <Table.Cell>John Smith</Table.Cell>
+          <Table.Cell>15 minutes ago</Table.Cell>
+          <Table.Cell>Ticket</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>I was charged twice!</Table.Cell>
+          <Table.Cell>Jane Doe</Table.Cell>
+          <Table.Cell>25 minutes ago</Table.Cell>
+          <Table.Cell>Call</Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table>
+  </ThemeProvider>
+);
+```
+
+### Sortable columns
+
+Use `Table.SortableCell` in the header row to make columns sortable. Set `sort` to `"asc"` or `"desc"` to indicate the current sort direction.
+
+```tsx
+import React, { useState } from 'react';
+import { Table } from '@zendeskgarden/react-tables';
+
+const Example = () => {
+  const [sort, setSort] = useState<'asc' | 'desc' | undefined>(undefined);
+
+  const handleSort = () => {
+    if (sort === 'asc') setSort('desc');
+    else if (sort === 'desc') setSort(undefined);
+    else setSort('asc');
+  };
+
+  return (
+    <ThemeProvider>
+      <Table>
+        <Table.Head>
+          <Table.HeaderRow>
+            <Table.SortableCell sort={sort} onClick={handleSort}>
+              Subject
+            </Table.SortableCell>
+            <Table.HeaderCell>Requester</Table.HeaderCell>
+          </Table.HeaderRow>
+        </Table.Head>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Ticket subject</Table.Cell>
+            <Table.Cell>John Smith</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    </ThemeProvider>
+  );
+};
+```
+
+### Row selection and striping
+
+```tsx
+const Example = () => (
+  <ThemeProvider>
+    <Table>
+      <Table.Head>
+        <Table.HeaderRow>
+          <Table.HeaderCell>Name</Table.HeaderCell>
+          <Table.HeaderCell>Status</Table.HeaderCell>
+        </Table.HeaderRow>
+      </Table.Head>
+      <Table.Body>
+        <Table.Row isSelected>
+          <Table.Cell>Selected row</Table.Cell>
+          <Table.Cell>Active</Table.Cell>
+        </Table.Row>
+        <Table.Row isStriped>
+          <Table.Cell>Striped row</Table.Cell>
+          <Table.Cell>Pending</Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>Default row</Table.Cell>
+          <Table.Cell>Closed</Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table>
+  </ThemeProvider>
+);
+```
+
+### Overflow actions
+
+Add `Table.OverflowButton` inside a cell that has `hasOverflow` to display a row-level action menu trigger.
+
+```tsx
+const Example = () => (
+  <ThemeProvider>
+    <Table>
+      <Table.Head>
+        <Table.HeaderRow>
+          <Table.HeaderCell>Subject</Table.HeaderCell>
+          <Table.HeaderCell isMinimum hasOverflow />
+        </Table.HeaderRow>
+      </Table.Head>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell>Where are my shoes?</Table.Cell>
+          <Table.Cell hasOverflow>
+            <Table.OverflowButton aria-label="Row actions" />
+          </Table.Cell>
+        </Table.Row>
+      </Table.Body>
+    </Table>
+  </ThemeProvider>
+);
+```
+
+---
+
+## Table
+
+The root `<table>` element. Provides size context to all child components.
+
+### Props
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="medium">
+  Sets the row density for the entire table.
+</ParamField>
+
+<ParamField path="isReadOnly" type="boolean">
+  Removes interactive hover and focus styling from rows. Use for display-only tables.
+</ParamField>
+
+---
+
+## Table.Head
+
+Wraps the `<thead>` section of the table.
+
+### Props
+
+<ParamField path="isSticky" type="boolean">
+  Makes the header row stick to the top of the viewport when scrolling a long table.
+</ParamField>
+
+---
+
+## Table.HeaderRow
+
+Renders a `<tr>` inside `Table.Head`. Accepts all standard `HTMLAttributes<HTMLTableRowElement>` props.
+
+---
+
+## Table.HeaderCell
+
+Renders a `<th>` cell in the header row.
+
+### Props
+
+<ParamField path="isMinimum" type="boolean">
+  Applies minimum fixed-width styling. Use for checkbox or icon columns.
+</ParamField>
+
+<ParamField path="isTruncated" type="boolean">
+  Truncates long text with an ellipsis.
+</ParamField>
+
+<ParamField path="hasOverflow" type="boolean">
+  Applies styling for a cell that contains an overflow menu button.
+</ParamField>
+
+<ParamField path="width" type="string | number">
+  Sets the column width.
+</ParamField>
+
+---
+
+## Table.Body
+
+Wraps the `<tbody>` section of the table. Accepts all standard `HTMLAttributes<HTMLTableSectionElement>` props.
+
+---
+
+## Table.Row
+
+Renders a `<tr>` inside `Table.Body`.
+
+### Props
+
+<ParamField path="isSelected" type="boolean">
+  Applies selected row styling (highlighted background).
+</ParamField>
+
+<ParamField path="isStriped" type="boolean">
+  Applies alternating striped row styling.
+</ParamField>
+
+---
+
+## Table.Cell
+
+Renders a `<td>` cell inside a body row.
+
+### Props
+
+<ParamField path="isMinimum" type="boolean">
+  Applies minimum fixed-width styling. Use for checkbox or icon columns.
+</ParamField>
+
+<ParamField path="isTruncated" type="boolean">
+  Truncates long text with an ellipsis.
+</ParamField>
+
+<ParamField path="hasOverflow" type="boolean">
+  Applies styling for a cell that contains an overflow menu button.
+</ParamField>
+
+<ParamField path="width" type="string | number">
+  Sets the cell width.
+</ParamField>
+
+---
+
+## Table.SortableCell
+
+Renders a header cell with a built-in sort button and sort direction icon. Manages `aria-sort` automatically.
+
+### Props
+
+<ParamField path="sort" type="'asc' | 'desc'">
+  The current sort direction. When `undefined`, a neutral sort icon is shown.
+</ParamField>
+
+<ParamField path="width" type="string | number">
+  Sets the column width.
+</ParamField>
+
+<ParamField path="cellProps" type="object">
+  Props forwarded to the underlying `<th>` cell element (supports `isMinimum`, `isTruncated`, `hasOverflow`).
+</ParamField>
+
+---
+
+## Table.OverflowButton
+
+Renders a vertical three-dot icon button intended for row-level overflow menus. Inherits its size from the `Table` context.
+
+```tsx
+<Table.Cell hasOverflow>
+  <Table.OverflowButton aria-label="Row actions" />
+</Table.Cell>
+```
+
+`Table.OverflowButton` accepts all standard `ButtonHTMLAttributes<HTMLButtonElement>` props.
+
+---
+
+## Table.Caption
+
+Renders an accessible `<caption>` element for the table. Captions are visually associated with the table and announced by screen readers.
+
+```tsx
+<Table>
+  <Table.Caption>Monthly sales report</Table.Caption>
+  ...
+</Table>
+```
+
+---
+
+## Table.GroupRow
+
+Renders a group header row spanning all columns, useful for grouping related rows within `Table.Body`.
+
+---
+
+## Exports
+
+The following are exported from `@zendeskgarden/react-tables`:
+
+| Export | Description |
+|--------|-------------|
+| `Table` | Root table element with all subcomponents attached |
+| `Table.Head` | `<thead>` wrapper |
+| `Table.HeaderRow` | `<tr>` inside the header |
+| `Table.HeaderCell` | `<th>` header cell |
+| `Table.Body` | `<tbody>` wrapper |
+| `Table.Row` | `<tr>` body row |
+| `Table.Cell` | `<td>` body cell |
+| `Table.SortableCell` | Sortable `<th>` with built-in sort button |
+| `Table.OverflowButton` | Row-level overflow menu trigger |
+| `Table.Caption` | Accessible table caption |
+| `Table.GroupRow` | Group header row |

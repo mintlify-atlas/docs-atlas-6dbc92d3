@@ -1,0 +1,424 @@
+---
+title: "Typography"
+description: "Text scale, inline formatting, lists, blockquotes, and code components from the Garden design system."
+---
+
+The `@zendeskgarden/react-typography` package provides a complete set of typography components: a six-step typescale, inline and block formatting helpers, list components, and a syntax-highlighted code block.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-typography
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-typography
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-typography
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+## Typescale components
+
+Garden's typescale maps to six size steps. All typescale components accept a `tag` prop to change the rendered HTML element and an `isBold` prop for bold weight. `SM`, `MD`, and `LG` also accept `isMonospace`.
+
+| Component | Rendered size | Default tag |
+|---|---|---|
+| `XXXL` | 3× extra-large | `div` |
+| `XXL` | 2× extra-large | `div` |
+| `XL` | Extra-large | `div` |
+| `LG` | Large | `div` |
+| `MD` | Medium (body) | `div` |
+| `SM` | Small | `div` |
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { XXXL, XXL, XL, LG, MD, SM } from '@zendeskgarden/react-typography';
+
+const App = () => (
+  <ThemeProvider>
+    <XXXL tag="h1">Page title</XXXL>
+    <XXL tag="h2">Section heading</XXL>
+    <XL tag="h3">Subsection heading</XL>
+    <LG>Lead paragraph text</LG>
+    <MD>Standard body text</MD>
+    <SM>Small print or helper text</SM>
+  </ThemeProvider>
+);
+```
+
+### Bold weight
+
+```tsx
+<XXXL isBold>Bold display heading</XXXL>
+<MD isBold>Bold body text</MD>
+<SM isBold>Bold small text</SM>
+```
+
+### Monospace
+
+`SM`, `MD`, and `LG` support the `isMonospace` prop for rendering code-like content inline.
+
+```tsx
+<MD isMonospace>const value = 42;</MD>
+<SM isMonospace>npm install @zendeskgarden/react-typography</SM>
+```
+
+### Typescale props
+
+<ParamField path="tag" type="any" default="'div'">
+  Updates the rendered HTML element (e.g. `'h1'`, `'h2'`, `'p'`, `'span'`).
+</ParamField>
+
+<ParamField path="isBold" type="boolean">
+  Applies bold font weight.
+</ParamField>
+
+<ParamField path="isMonospace" type="boolean">
+  Renders text in a monospace font. Available on `SM`, `MD`, and `LG` only.
+</ParamField>
+
+---
+
+## Blockquote
+
+`Blockquote` renders a styled `<blockquote>` element. The `size` prop controls the vertical spacing between sibling blockquotes and paragraphs.
+
+```tsx
+import { Blockquote, MD } from '@zendeskgarden/react-typography';
+
+<Blockquote>
+  <MD>
+    The best way to predict the future is to invent it.
+  </MD>
+</Blockquote>
+```
+
+### Props
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Controls spacing between sibling blockquotes and paragraphs.
+</ParamField>
+
+---
+
+## Code
+
+`Code` renders an inline `<code>` element with background and text color styling. Use it for inline code references within prose.
+
+```tsx
+import { MD, Code } from '@zendeskgarden/react-typography';
+
+<MD>
+  Call <Code>ThemeProvider</Code> at the root of your application.
+</MD>
+```
+
+### Hue
+
+Use the `hue` prop to apply a semantic color to inline code.
+
+```tsx
+<Code hue="grey">default</Code>
+<Code hue="red">error</Code>
+<Code hue="green">success</Code>
+<Code hue="yellow">warning</Code>
+```
+
+### Props
+
+<ParamField path="hue" type="'grey' | 'red' | 'green' | 'yellow'" default="'grey'">
+  Applies a color to the background and text.
+</ParamField>
+
+<ParamField path="size" type="'inherit' | 'small' | 'medium' | 'large'" default="'inherit'">
+  Adjusts the font size. Defaults to inheriting from the surrounding text.
+</ParamField>
+
+---
+
+## UnorderedList
+
+`UnorderedList` renders a `<ul>` with styled list items. Nest `UnorderedList.Item` for each entry.
+
+```tsx
+import { UnorderedList } from '@zendeskgarden/react-typography';
+
+<UnorderedList>
+  <UnorderedList.Item>First item</UnorderedList.Item>
+  <UnorderedList.Item>Second item</UnorderedList.Item>
+  <UnorderedList.Item>Third item</UnorderedList.Item>
+</UnorderedList>
+```
+
+### Marker style
+
+```tsx
+<UnorderedList type="disc">…</UnorderedList>
+<UnorderedList type="circle">…</UnorderedList>
+<UnorderedList type="square">…</UnorderedList>
+```
+
+### Props
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Adjusts the vertical spacing between list items.
+</ParamField>
+
+<ParamField path="type" type="'disc' | 'circle' | 'square'" default="'disc'">
+  Sets the list marker style.
+</ParamField>
+
+---
+
+## OrderedList
+
+`OrderedList` renders an `<ol>` with styled list items. Nest `OrderedList.Item` for each entry.
+
+```tsx
+import { OrderedList } from '@zendeskgarden/react-typography';
+
+<OrderedList>
+  <OrderedList.Item>Install the package</OrderedList.Item>
+  <OrderedList.Item>Add ThemeProvider</OrderedList.Item>
+  <OrderedList.Item>Import a component</OrderedList.Item>
+</OrderedList>
+```
+
+### Marker style
+
+```tsx
+<OrderedList type="decimal">…</OrderedList>
+<OrderedList type="decimal-leading-zero">…</OrderedList>
+<OrderedList type="lower-alpha">…</OrderedList>
+<OrderedList type="upper-alpha">…</OrderedList>
+<OrderedList type="lower-roman">…</OrderedList>
+<OrderedList type="upper-roman">…</OrderedList>
+```
+
+### Props
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Adjusts the vertical spacing between list items.
+</ParamField>
+
+<ParamField path="type" type="'decimal' | 'decimal-leading-zero' | 'lower-alpha' | 'lower-roman' | 'upper-alpha' | 'upper-roman'" default="'decimal'">
+  Sets the ordered list marker style.
+</ParamField>
+
+---
+
+## Span
+
+`Span` is an inline text component that supports color (`hue`), bold weight, and monospace rendering. It also composes `Span.Icon` and `Span.StartIcon` for inline SVG icons.
+
+```tsx
+import { MD, Span } from '@zendeskgarden/react-typography';
+
+<MD>
+  This field is <Span isBold>required</Span> and must be a valid{' '}
+  <Span isMonospace>email</Span> address.
+</MD>
+```
+
+### Color
+
+Pass a theme color variable key or hex value to the `hue` prop.
+
+```tsx
+<Span hue="foreground.subtle">Secondary text</Span>
+<Span hue="#c72a1c">Error text</Span>
+```
+
+### Inline icons
+
+`Span.Icon` renders an SVG icon sized to match surrounding text. `Span.StartIcon` adds leading spacing suitable for an icon that precedes text.
+
+```tsx
+import CheckIcon from '@zendeskgarden/svg-icons/src/16/check-lg-fill.svg';
+import InfoIcon from '@zendeskgarden/svg-icons/src/16/info-stroke.svg';
+
+<MD>
+  <Span>
+    <Span.StartIcon>
+      <InfoIcon />
+    </Span.StartIcon>
+    Read the documentation
+  </Span>
+</MD>
+
+<MD>
+  <Span hue="successHue">
+    Saved
+    <Span.Icon>
+      <CheckIcon />
+    </Span.Icon>
+  </Span>
+</MD>
+```
+
+### Props
+
+<ParamField path="hue" type="string">
+  Applies a font color. Accepts a theme color variable key (e.g. `foreground.subtle`) or a hex value.
+</ParamField>
+
+<ParamField path="isBold" type="boolean">
+  Applies bold font weight. Inherits by default.
+</ParamField>
+
+<ParamField path="isMonospace" type="boolean">
+  Renders text in a monospace font.
+</ParamField>
+
+<ParamField path="tag" type="any" default="'span'">
+  Updates the rendered HTML element.
+</ParamField>
+
+---
+
+## Paragraph
+
+`Paragraph` renders a `<p>` element with standard body spacing. Use it for prose content within articles and documentation layouts.
+
+```tsx
+import { Paragraph } from '@zendeskgarden/react-typography';
+
+<Paragraph>
+  Garden is Zendesk's open-source React design system. It provides accessible,
+  themeable components for building customer service experiences.
+</Paragraph>
+```
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Adjusts the font size of the paragraph.
+</ParamField>
+
+---
+
+## Ellipsis
+
+`Ellipsis` truncates overflowing text with an ellipsis (`…`). Wrap any inline or block text element to apply single-line overflow truncation.
+
+```tsx
+import { Ellipsis, MD } from '@zendeskgarden/react-typography';
+
+<MD>
+  <Ellipsis>
+    This is a very long piece of text that will be truncated when it overflows its container.
+  </Ellipsis>
+</MD>
+```
+
+---
+
+## Kbd
+
+`Kbd` renders an inline keyboard shortcut styled as a key cap.
+
+```tsx
+import { MD, Kbd } from '@zendeskgarden/react-typography';
+
+<MD>
+  Press <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to open the command palette.
+</MD>
+```
+
+---
+
+## CodeBlock
+
+`CodeBlock` renders a multi-line syntax-highlighted code block. It is the block-level counterpart to the inline `Code` component.
+
+```tsx
+import { CodeBlock } from '@zendeskgarden/react-typography';
+
+<CodeBlock language="tsx">
+  {`import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const App = () => (
+  <ThemeProvider>
+    <Button isPrimary>Hello Garden</Button>
+  </ThemeProvider>
+);`}
+</CodeBlock>
+```
+
+<ParamField path="language" type="string">
+  Language string for syntax highlighting (e.g. `'tsx'`, `'bash'`, `'json'`).
+</ParamField>
+
+<ParamField path="isNumbered" type="boolean">
+  Shows line numbers in the gutter.
+</ParamField>
+
+<ParamField path="highlightLines" type="number[]">
+  Array of line numbers to highlight.
+</ParamField>
+
+---
+
+## Full example
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import {
+  XXXL,
+  LG,
+  MD,
+  SM,
+  Blockquote,
+  Code,
+  UnorderedList,
+  OrderedList,
+  Span
+} from '@zendeskgarden/react-typography';
+
+const Article = () => (
+  <ThemeProvider>
+    <XXXL tag="h1" isBold>Getting started with Garden</XXXL>
+
+    <LG tag="p">
+      Garden is Zendesk's open-source design system for React.
+      Install the package with <Code>npm install @zendeskgarden/react-typography</Code>.
+    </LG>
+
+    <Blockquote>
+      <MD>Accessible by default, themeable by design.</MD>
+    </Blockquote>
+
+    <MD tag="h2" isBold>Installation steps</MD>
+    <OrderedList>
+      <OrderedList.Item>Install the package</OrderedList.Item>
+      <OrderedList.Item>Wrap your app in <Code>ThemeProvider</Code></OrderedList.Item>
+      <OrderedList.Item>Import and use components</OrderedList.Item>
+    </OrderedList>
+
+    <MD tag="h2" isBold>Features</MD>
+    <UnorderedList>
+      <UnorderedList.Item>WCAG 2.1 AA compliant</UnorderedList.Item>
+      <UnorderedList.Item>Light and dark mode support</UnorderedList.Item>
+      <UnorderedList.Item>RTL layout support</UnorderedList.Item>
+    </UnorderedList>
+
+    <SM>
+      <Span hue="foreground.subtle">Last updated March 2026</Span>
+    </SM>
+  </ThemeProvider>
+);
+```

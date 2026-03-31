@@ -1,0 +1,469 @@
+---
+title: 'Colorpickers'
+description: 'Color selection components including a full HSV color picker, a color swatch grid, and dialog variants of each.'
+keywords: ['colorpicker', 'color picker', 'color swatch', 'color dialog', 'hue', 'rgba', 'hex']
+---
+
+The `@zendeskgarden/react-colorpickers` package provides four components for color selection: `ColorPicker`, `ColorPickerDialog`, `ColorSwatch`, and `ColorSwatchDialog`.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-colorpickers
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-colorpickers
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-colorpickers
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+## ColorPicker
+
+`ColorPicker` renders an inline HSV color well with hue and alpha sliders and text inputs for hex and RGBA values.
+
+### Basic usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorPicker } from '@zendeskgarden/react-colorpickers';
+
+<ThemeProvider>
+  <ColorPicker defaultColor="#17494D" />
+</ThemeProvider>
+```
+
+### Controlled color picker
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorPicker } from '@zendeskgarden/react-colorpickers';
+import { useState } from 'react';
+
+function ControlledColorPicker() {
+  const [color, setColor] = useState({ hex: '#17494D', red: 23, green: 73, blue: 77, alpha: 100, hue: 186, saturation: 70, lightness: 39 });
+
+  return (
+    <ThemeProvider>
+      <ColorPicker
+        color={color}
+        onChange={nextColor => setColor(nextColor)}
+      />
+    </ThemeProvider>
+  );
+}
+```
+
+### Opaque mode
+
+Set `isOpaque` to hide the alpha slider and alpha input field.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorPicker } from '@zendeskgarden/react-colorpickers';
+
+<ThemeProvider>
+  <ColorPicker defaultColor="#3C3C3C" isOpaque />
+</ThemeProvider>
+```
+
+### Custom labels
+
+Replace any of the internal field labels for localization.
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorPicker } from '@zendeskgarden/react-colorpickers';
+
+<ThemeProvider>
+  <ColorPicker
+    defaultColor="#17494D"
+    labels={{
+      hueSlider: 'Farbton',
+      alphaSlider: 'Transparenz',
+      hex: 'Hex',
+      red: 'R',
+      green: 'G',
+      blue: 'B',
+      alpha: 'A'
+    }}
+  />
+</ThemeProvider>
+```
+
+### ColorPicker props
+
+<ParamField path="defaultColor" type="string | IColor" default="#fff">
+  Initial color in an uncontrolled color picker. Accepts a hex string or an `IColor` object.
+</ParamField>
+
+<ParamField path="color" type="string | IColor">
+  The current color in a controlled color picker.
+</ParamField>
+
+<ParamField path="onChange" type="(color: IColor) => void">
+  Called whenever the selected color changes. Receives a full `IColor` object with `hex`, `red`, `green`, `blue`, `alpha`, `hue`, `saturation`, and `lightness` fields.
+</ParamField>
+
+<ParamField path="isOpaque" type="boolean">
+  Hides the alpha slider and alpha input. Forces `alpha` to `100` in the returned color object.
+</ParamField>
+
+<ParamField path="labels" type="object">
+  Replaces internal label text. Accepts `hueSlider`, `alphaSlider`, `hex`, `red`, `green`, `blue`, and `alpha` keys.
+</ParamField>
+
+### IColor object
+
+The `onChange` callback and controlled `color` prop use the following shape:
+
+```typescript
+interface IColor {
+  hex: string;       // e.g. "#17494D"
+  hue: number;       // 0–360
+  saturation: number;// 0–100
+  lightness: number; // 0–100
+  red: number;       // 0–255
+  green: number;     // 0–255
+  blue: number;      // 0–255
+  alpha: number;     // 0–100
+}
+```
+
+## ColorPickerDialog
+
+`ColorPickerDialog` wraps `ColorPicker` in a floating dialog triggered by a preview button. Use it in forms and toolbars where inline display is not appropriate.
+
+### Basic usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorPickerDialog } from '@zendeskgarden/react-colorpickers';
+
+<ThemeProvider>
+  <ColorPickerDialog
+    defaultColor="#17494D"
+    buttonProps={{ 'aria-label': 'Choose brand color' }}
+  />
+</ThemeProvider>
+```
+
+### Controlled dialog
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorPickerDialog } from '@zendeskgarden/react-colorpickers';
+import { useState } from 'react';
+
+function ControlledColorPickerDialog() {
+  const [color, setColor] = useState('#17494D');
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <ThemeProvider>
+      <ColorPickerDialog
+        color={color}
+        isOpen={isOpen}
+        onChange={setColor}
+        onDialogChange={({ isOpen: open }) => setIsOpen(open)}
+        onClose={finalColor => console.log('Closed with:', finalColor.hex)}
+        buttonProps={{ 'aria-label': 'Choose color' }}
+      />
+    </ThemeProvider>
+  );
+}
+```
+
+### ColorPickerDialog props
+
+`ColorPickerDialog` accepts all `ColorPicker` props in addition to the following:
+
+<ParamField path="onClose" type="(color: IColor) => void">
+  Called when the dialog closes. Receives the current color at the time of closing.
+</ParamField>
+
+<ParamField path="placement" type="string" default="bottom-start">
+  Adjusts the dialog position relative to the trigger button.
+</ParamField>
+
+<ParamField path="isOpen" type="boolean">
+  Controls dialog visibility in a controlled dialog.
+</ParamField>
+
+<ParamField path="onDialogChange" type="(changes: { isOpen: boolean }) => void">
+  Called when the dialog open state changes.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Disables the trigger button.
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies inset `box-shadow` styling on focus to the trigger button.
+</ParamField>
+
+<ParamField path="buttonProps" type="HTMLAttributes<HTMLButtonElement>">
+  Additional HTML attributes applied to the trigger button. Use this to provide an `aria-label`.
+</ParamField>
+
+<ParamField path="hasArrow" type="boolean" default="false">
+  Adds an arrow to the dialog pointing toward the trigger button.
+</ParamField>
+
+<ParamField path="isAnimated" type="boolean" default="true">
+  Animates the dialog open and close transitions.
+</ParamField>
+
+<ParamField path="zIndex" type="number" default="1000">
+  `z-index` of the dialog overlay.
+</ParamField>
+
+## ColorSwatch
+
+`ColorSwatch` renders an accessible grid of color swatches backed by radio (or checkbox) inputs. Navigate with arrow keys; select with Space or Enter.
+
+### Basic usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorSwatch } from '@zendeskgarden/react-colorpickers';
+
+const colors = [
+  [
+    { label: 'Green-800', value: '#0b3b29' },
+    { label: 'Green-700', value: '#186146' },
+    { label: 'Green-600', value: '#038153' },
+    { label: 'Green-500', value: '#228f67' }
+  ],
+  [
+    { label: 'Blue-800', value: '#0f3554' },
+    { label: 'Blue-700', value: '#1f73b7' },
+    { label: 'Blue-600', value: '#337fbd' },
+    { label: 'Blue-500', value: '#5293c7' }
+  ]
+];
+
+<ThemeProvider>
+  <ColorSwatch
+    name="brand-color"
+    colors={colors}
+    onSelect={(rowIndex, colIndex) => {
+      if (rowIndex !== null && colIndex !== null) {
+        console.log('Selected:', colors[rowIndex][colIndex].value);
+      }
+    }}
+  />
+</ThemeProvider>
+```
+
+### Controlled swatch
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorSwatch } from '@zendeskgarden/react-colorpickers';
+import { useState } from 'react';
+
+const colors = [
+  [
+    { label: 'Green-800', value: '#0b3b29' },
+    { label: 'Green-700', value: '#186146' }
+  ],
+  [
+    { label: 'Blue-800', value: '#0f3554' },
+    { label: 'Blue-700', value: '#1f73b7' }
+  ]
+];
+
+function ControlledSwatch() {
+  const [selectedRow, setSelectedRow] = useState(0);
+  const [selectedCol, setSelectedCol] = useState(0);
+
+  return (
+    <ThemeProvider>
+      <ColorSwatch
+        name="palette"
+        colors={colors}
+        selectedRowIndex={selectedRow}
+        selectedColIndex={selectedCol}
+        onSelect={(row, col) => {
+          setSelectedRow(row);
+          setSelectedCol(col);
+        }}
+      />
+    </ThemeProvider>
+  );
+}
+```
+
+### ColorSwatch props
+
+<ParamField path="name" type="string" required>
+  The `name` attribute shared across all swatch radio or checkbox inputs. Must be unique on the page.
+</ParamField>
+
+<ParamField path="colors" type="{ value: string; label: string }[][]" required>
+  A two-dimensional array of color objects. Each inner array represents a row of swatches.
+</ParamField>
+
+<ParamField path="selectedRowIndex" type="number | null">
+  Row index of the selected color in a controlled swatch. Pass `null` to clear the selection.
+</ParamField>
+
+<ParamField path="selectedColIndex" type="number | null">
+  Column index of the selected color in a controlled swatch. Pass `null` to clear the selection.
+</ParamField>
+
+<ParamField path="defaultSelectedRowIndex" type="number">
+  Row index of the initially selected color in an uncontrolled swatch.
+</ParamField>
+
+<ParamField path="defaultSelectedColIndex" type="number">
+  Column index of the initially selected color in an uncontrolled swatch.
+</ParamField>
+
+<ParamField path="onSelect" type="(rowIndex: number | null, colIndex: number | null) => void">
+  Called when a swatch is selected or deselected. Receives `null, null` when a swatch is unchecked in checkbox mode.
+</ParamField>
+
+<ParamField path="isCheckboxGroup" type="boolean">
+  Uses checkbox inputs instead of radio inputs. Allows deselecting the current color.
+</ParamField>
+
+## ColorSwatchDialog
+
+`ColorSwatchDialog` wraps `ColorSwatch` in a floating dialog triggered by a preview button. The dialog closes when focus leaves the swatch grid.
+
+### Basic usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorSwatchDialog } from '@zendeskgarden/react-colorpickers';
+
+const colors = [
+  [
+    { label: 'Green-800', value: '#0b3b29' },
+    { label: 'Green-700', value: '#186146' },
+    { label: 'Green-600', value: '#038153' }
+  ],
+  [
+    { label: 'Blue-800', value: '#0f3554' },
+    { label: 'Blue-700', value: '#1f73b7' },
+    { label: 'Blue-600', value: '#337fbd' }
+  ]
+];
+
+<ThemeProvider>
+  <ColorSwatchDialog
+    name="swatch-dialog"
+    colors={colors}
+    buttonProps={{ 'aria-label': 'Choose color' }}
+    onSelect={(rowIndex, colIndex) => {
+      if (rowIndex !== null && colIndex !== null) {
+        console.log('Selected:', colors[rowIndex][colIndex].value);
+      }
+    }}
+  />
+</ThemeProvider>
+```
+
+### Controlled swatch dialog
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { ColorSwatchDialog } from '@zendeskgarden/react-colorpickers';
+import { useState } from 'react';
+
+const colors = [
+  [
+    { label: 'Green-800', value: '#0b3b29' },
+    { label: 'Green-700', value: '#186146' }
+  ],
+  [
+    { label: 'Blue-800', value: '#0f3554' },
+    { label: 'Blue-700', value: '#1f73b7' }
+  ]
+];
+
+function ControlledSwatchDialog() {
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedCol, setSelectedCol] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <ThemeProvider>
+      <ColorSwatchDialog
+        name="controlled-swatch"
+        colors={colors}
+        selectedRowIndex={selectedRow}
+        selectedColIndex={selectedCol}
+        isOpen={isOpen}
+        onDialogChange={({ isOpen: open }) => setIsOpen(open)}
+        onSelect={(row, col) => {
+          setSelectedRow(row);
+          setSelectedCol(col);
+        }}
+        buttonProps={{ 'aria-label': 'Choose a color' }}
+      />
+    </ThemeProvider>
+  );
+}
+```
+
+### ColorSwatchDialog props
+
+`ColorSwatchDialog` accepts all `ColorSwatch` props in addition to the following:
+
+<ParamField path="placement" type="string" default="bottom-start">
+  Adjusts the dialog position relative to the trigger button.
+</ParamField>
+
+<ParamField path="isOpen" type="boolean">
+  Controls dialog visibility in a controlled dialog.
+</ParamField>
+
+<ParamField path="onDialogChange" type="(changes: { isOpen: boolean }) => void">
+  Called when the dialog open state changes.
+</ParamField>
+
+<ParamField path="disabled" type="boolean">
+  Disables the trigger button.
+</ParamField>
+
+<ParamField path="focusInset" type="boolean">
+  Applies inset `box-shadow` styling on focus to the trigger button.
+</ParamField>
+
+<ParamField path="buttonProps" type="HTMLAttributes<HTMLButtonElement>">
+  Additional HTML attributes applied to the trigger button. Use this to provide an `aria-label`.
+</ParamField>
+
+<ParamField path="hasArrow" type="boolean" default="false">
+  Adds an arrow to the dialog pointing toward the trigger button.
+</ParamField>
+
+<ParamField path="isAnimated" type="boolean" default="true">
+  Animates the dialog open and close transitions.
+</ParamField>
+
+<ParamField path="zIndex" type="number" default="1000">
+  `z-index` of the dialog overlay.
+</ParamField>
+
+<Tip>
+  Always provide an `aria-label` via `buttonProps` for both `ColorPickerDialog` and `ColorSwatchDialog`. The trigger button shows only a color preview, which has no inherent text for screen readers.
+</Tip>

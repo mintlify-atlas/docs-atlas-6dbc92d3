@@ -1,0 +1,423 @@
+---
+title: "Theming"
+description: "Customize Garden components with ThemeProvider, DEFAULT_THEME, color schemes, and RTL support."
+---
+
+The `@zendeskgarden/react-theming` package is the foundation for all Garden component styling. It provides `ThemeProvider`, the `DEFAULT_THEME` object, color scheme management, and RTL layout support.
+
+## ThemeProvider
+
+Place a single `ThemeProvider` at the root of your app. Every Garden component must be rendered inside one.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+
+const App = ({ children }) => (
+  <ThemeProvider>
+    {children}
+  </ThemeProvider>
+);
+```
+
+`ThemeProvider` accepts an optional `theme` prop. Without it, components render using `DEFAULT_THEME`.
+
+<ParamField path="theme" type="IGardenTheme | ((theme: IGardenTheme) => IGardenTheme)">
+  A theme object or a function that receives the parent theme and returns a modified theme. Defaults to `DEFAULT_THEME`.
+</ParamField>
+
+### Nested ThemeProviders
+
+`ThemeProvider` can be nested to scope theme overrides to a subtree of your app:
+
+```tsx
+import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+
+const App = ({ children }) => (
+  <ThemeProvider>
+    {/* Most of the app uses DEFAULT_THEME */}
+    <Sidebar>
+      {/* This section uses a custom accent color */}
+      <ThemeProvider theme={{ ...DEFAULT_THEME, colors: { ...DEFAULT_THEME.colors, primaryHue: 'royal' } }}>
+        <SidebarContent />
+      </ThemeProvider>
+    </Sidebar>
+  </ThemeProvider>
+);
+```
+
+## DEFAULT_THEME
+
+`DEFAULT_THEME` is a full `IGardenTheme` object exported from `@zendeskgarden/react-theming`. It defines all default values used by Garden components.
+
+```tsx
+import { DEFAULT_THEME } from '@zendeskgarden/react-theming';
+```
+
+The top-level keys of `DEFAULT_THEME` are:
+
+| Key | Type | Description |
+| --- | --- | --- |
+| `colors` | `object` | Color hues, base (light/dark), and semantic color variables |
+| `fonts` | `object` | `system` and `mono` font stacks |
+| `fontSizes` | `object` | Named font sizes from `xs` (10px) to `xxxl` (36px) |
+| `fontWeights` | `object` | Named weights from `thin` (100) to `black` (900) |
+| `lineHeights` | `object` | Named line heights from `sm` (16px) to `xxxl` (44px) |
+| `space` | `object` | Spacing scale with a 4px `base` unit |
+| `borders` | `object` | `sm` and `md` border shorthand strings |
+| `borderRadii` | `object` | `sm` (2px), `md` (4px), `lg` (8px) |
+| `borderWidths` | `object` | `sm` (1px), `md` (3px) |
+| `breakpoints` | `object` | Responsive breakpoints `xs` through `xl` |
+| `iconSizes` | `object` | `sm` (12px), `md` (16px), `lg` (26px) |
+| `shadows` | `object` | Shadow factory functions |
+| `shadowWidths` | `object` | `xs` (1px), `sm` (2px), `md` (3px) |
+| `opacity` | `object` | Opacity scale from `100` (0.08) to `1200` (0.96) |
+| `palette` | `object` | Full color palette (grey, blue, red, yellow, green, kale, and more) |
+| `rtl` | `boolean` | Right-to-left layout toggle (default: `false`) |
+| `components` | `object` | Per-component CSS overrides keyed by component ID |
+
+## Customizing the theme
+
+Garden provides three levels of customization, ordered from simple to complex.
+
+<Tabs>
+  <Tab title="Theme prop">
+    ### Customizing via the theme prop
+
+    Pass a modified theme object to `ThemeProvider` to adjust colors, fonts, spacing, and other design tokens across all components at once.
+
+    The most common customization is changing `colors.primaryHue` to match your brand. `primaryHue` must be a key from `DEFAULT_THEME.palette` (e.g. `'blue'`, `'green'`, `'royal'`, `'azure'`) or a custom hue object.
+
+    ```tsx
+    import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+
+    const customTheme = {
+      ...DEFAULT_THEME,
+      colors: {
+        ...DEFAULT_THEME.colors,
+        primaryHue: 'green'   // use Garden's green palette as primary
+      }
+    };
+
+    const App = ({ children }) => (
+      <ThemeProvider theme={customTheme}>
+        {children}
+      </ThemeProvider>
+    );
+    ```
+
+    You can also change `dangerHue`, `warningHue`, `successHue`, `neutralHue`, and `chromeHue`:
+
+    ```tsx
+    const customTheme = {
+      ...DEFAULT_THEME,
+      colors: {
+        ...DEFAULT_THEME.colors,
+        primaryHue: 'royal',
+        dangerHue: 'crimson'
+      }
+    };
+    ```
+
+    ### Customizing fonts
+
+    Override `fonts.system` to use a custom typeface:
+
+    ```tsx
+    const customTheme = {
+      ...DEFAULT_THEME,
+      fonts: {
+        ...DEFAULT_THEME.fonts,
+        system: '"Inter", system-ui, sans-serif'
+      }
+    };
+    ```
+
+    ### Customizing spacing
+
+    The spacing scale is based on a 4px `base` unit. Increase it to make all components proportionally larger:
+
+    ```tsx
+    const BASE = 5; // 5px base instead of 4px
+
+    const customTheme = {
+      ...DEFAULT_THEME,
+      space: {
+        base: BASE,
+        xxs: `${BASE}px`,
+        xs: `${BASE * 2}px`,
+        sm: `${BASE * 3}px`,
+        md: `${BASE * 5}px`,
+        lg: `${BASE * 8}px`,
+        xl: `${BASE * 10}px`,
+        xxl: `${BASE * 12}px`
+      }
+    };
+    ```
+  </Tab>
+
+  <Tab title="theme.components">
+    ### Per-component CSS overrides
+
+    `theme.components` lets you target precise CSS properties on individual components using their `COMPONENT_ID` as the key. This is useful when the higher-level token changes don't give you enough control.
+
+    Each value can be a CSS string or a function that receives the component's props (including the theme) and returns a CSS string.
+
+    ```tsx
+    import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+
+    const customTheme = {
+      ...DEFAULT_THEME,
+      components: {
+        // Override the tabs tab list bottom margin
+        'tabs.tablist': `
+          margin-bottom: 0;
+        `,
+        // Override button padding using a function for access to props
+        'buttons.button': (props) => `
+          padding: ${props.theme.space.xs} ${props.theme.space.md};
+        `
+      }
+    };
+
+    const App = ({ children }) => (
+      <ThemeProvider theme={customTheme}>
+        {children}
+      </ThemeProvider>
+    );
+    ```
+
+    <Note>
+      Component IDs follow the pattern `<package>.<element>` (e.g. `'tabs.tablist'`, `'buttons.button'`). You can find a component's ID in the Garden source as its `data-garden-id` attribute.
+    </Note>
+
+    <Tip>
+      Use `theme.components` for surgical overrides — for example, removing a specific margin or padding. If you find yourself re-skinning an entire component, consider using [Garden's react-containers](https://github.com/zendeskgarden/react-containers) instead, which gives you the accessible behavior without the Garden visual style.
+    </Tip>
+  </Tab>
+
+  <Tab title="react-containers">
+    ### Full re-skinning with react-containers
+
+    When `theme` and `theme.components` overrides have diminishing returns — for example, when you want a completely different visual style — use [Garden's `react-containers`](https://github.com/zendeskgarden/react-containers).
+
+    Containers provide the accessible keyboard behavior and RTL layout logic without any Garden visual styling. You bring your own CSS.
+
+    ```tsx
+    import { TabsContainer } from '@zendeskgarden/container-tabs';
+
+    // Retain accessible tab keyboard behavior with your own visual design
+    const MyTabs = () => (
+      <TabsContainer>
+        {({ getTabProps, getTabPanelProps, selectedTab }) => (
+          <div>
+            <div role="tablist">
+              <button {...getTabProps({ key: 'tab-1' })}>Tab 1</button>
+              <button {...getTabProps({ key: 'tab-2' })}>Tab 2</button>
+            </div>
+            <div {...getTabPanelProps({ key: 'tab-1' })}>Panel 1</div>
+            <div {...getTabPanelProps({ key: 'tab-2' })}>Panel 2</div>
+          </div>
+        )}
+      </TabsContainer>
+    );
+    ```
+  </Tab>
+</Tabs>
+
+## Color scheme (light / dark / system)
+
+`ColorSchemeProvider` and the `useColorScheme` hook let users persist a preferred color scheme. The supported values are `'light'`, `'dark'`, and `'system'` (which follows the OS preference).
+
+### Setup
+
+Wrap your app in `ColorSchemeProvider`, then use `useColorScheme` inside it to read the current scheme and pass it to `ThemeProvider`:
+
+```tsx
+import {
+  useColorScheme,
+  ColorSchemeProvider,
+  ThemeProvider,
+  DEFAULT_THEME
+} from '@zendeskgarden/react-theming';
+
+const ThemedApp = ({ children }) => {
+  const { colorScheme } = useColorScheme();
+  const theme = {
+    ...DEFAULT_THEME,
+    colors: { ...DEFAULT_THEME.colors, base: colorScheme }
+  };
+
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+};
+
+const App = ({ children }) => (
+  <ColorSchemeProvider>
+    <ThemedApp>{children}</ThemedApp>
+  </ColorSchemeProvider>
+);
+```
+
+<Warning>
+  `useColorScheme` must be called inside a `ColorSchemeProvider`. Calling it outside throws: `Error: this component must be rendered within a <ColorSchemeProvider>.`
+</Warning>
+
+### ColorSchemeProvider props
+
+<ParamField path="initialColorScheme" type="'light' | 'dark' | 'system'" default="'system'">
+  Sets the initial color scheme. A user's stored preference in `localStorage` overrides this value.
+</ParamField>
+
+<ParamField path="colorSchemeKey" type="string | null" default="'color-scheme'">
+  The `localStorage` key used to persist the user's preference. Set to `null` to disable persistence.
+</ParamField>
+
+### useColorScheme return value
+
+<ParamField path="colorScheme" type="'light' | 'dark'">
+  The resolved color scheme — always `'light'` or `'dark'`, never `'system'`.
+</ParamField>
+
+<ParamField path="isSystem" type="boolean">
+  `true` when the color scheme is determined by the OS preference.
+</ParamField>
+
+<ParamField path="setColorScheme" type="(colorScheme: 'light' | 'dark' | 'system') => void">
+  Updates the active color scheme and persists it to `localStorage`.
+</ParamField>
+
+### Letting users switch color schemes
+
+```tsx
+import { useColorScheme } from '@zendeskgarden/react-theming';
+
+const ColorSchemeSwitcher = () => {
+  const { colorScheme, setColorScheme } = useColorScheme();
+
+  return (
+    <div>
+      <button onClick={() => setColorScheme('light')}>Light</button>
+      <button onClick={() => setColorScheme('dark')}>Dark</button>
+      <button onClick={() => setColorScheme('system')}>System</button>
+      <span>Current: {colorScheme}</span>
+    </div>
+  );
+};
+```
+
+## RTL support
+
+Set `theme.rtl = true` to flip all Garden component layouts for right-to-left languages such as Arabic or Hebrew:
+
+```tsx
+import { ThemeProvider, DEFAULT_THEME } from '@zendeskgarden/react-theming';
+import { Notification } from '@zendeskgarden/react-notifications';
+
+const App = () => (
+  <ThemeProvider theme={{ ...DEFAULT_THEME, rtl: true }}>
+    <Notification>This notification content will render with RTL layout.</Notification>
+  </ThemeProvider>
+);
+```
+
+<Tip>
+  You can nest a `ThemeProvider` with `rtl: true` inside a parent `ThemeProvider` to apply RTL layout only to a specific subtree — for example, a section of your app that renders Arabic content.
+</Tip>
+
+## DEFAULT_THEME reference
+
+### colors
+
+<ParamField path="colors.base" type="'light' | 'dark'" default="'light'">
+  The active color scheme. Change this to `'dark'` to enable dark mode.
+</ParamField>
+
+<ParamField path="colors.primaryHue" type="string" default="'blue'">
+  The primary accent color. Must be a key in `palette` (e.g. `'blue'`, `'green'`, `'royal'`) or a custom hue object.
+</ParamField>
+
+<ParamField path="colors.dangerHue" type="string" default="'red'">
+  The color hue used for destructive or error states.
+</ParamField>
+
+<ParamField path="colors.warningHue" type="string" default="'yellow'">
+  The color hue used for warning states.
+</ParamField>
+
+<ParamField path="colors.successHue" type="string" default="'green'">
+  The color hue used for success states.
+</ParamField>
+
+<ParamField path="colors.neutralHue" type="string" default="'grey'">
+  The color hue used for neutral / muted elements.
+</ParamField>
+
+<ParamField path="colors.chromeHue" type="string" default="'kale'">
+  The color hue used for the Chrome navigation shell.
+</ParamField>
+
+### fonts
+
+<ParamField path="fonts.system" type="string">
+  The system sans-serif font stack used for body text and UI labels. Defaults to `system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, ...`.
+</ParamField>
+
+<ParamField path="fonts.mono" type="string">
+  The monospace font stack. Defaults to `SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier, monospace`.
+</ParamField>
+
+### space
+
+The spacing scale uses a `base` of `4` (pixels). All named values are multiples of `base`:
+
+| Key | Value |
+| --- | --- |
+| `base` | `4` (number) |
+| `xxs` | `4px` |
+| `xs` | `8px` |
+| `sm` | `12px` |
+| `md` | `20px` |
+| `lg` | `32px` |
+| `xl` | `40px` |
+| `xxl` | `48px` |
+
+### fontSizes
+
+| Key | Value |
+| --- | --- |
+| `xs` | `10px` |
+| `sm` | `12px` |
+| `md` | `14px` |
+| `lg` | `18px` |
+| `xl` | `22px` |
+| `xxl` | `26px` |
+| `xxxl` | `36px` |
+
+### palette
+
+`DEFAULT_THEME.palette` contains the full Garden color palette. Primary hues are:
+
+| Key | Description |
+| --- | --- |
+| `grey` | Neutral grey (100–1200) |
+| `blue` | Primary blue (100–1200) |
+| `red` | Danger red (100–1200) |
+| `yellow` | Warning yellow (100–1200) |
+| `green` | Success green (100–1200) |
+| `kale` | Chrome teal-green (100–1200) |
+
+Secondary hues: `fuschia`, `pink`, `crimson`, `orange`, `lemon`, `lime`, `mint`, `teal`, `azure`, `royal`, `purple`.
+
+Special values: `palette.black` (`#000`) and `palette.white` (`#fff`).
+
+## TypeScript
+
+`DEFAULT_THEME` is typed as `IGardenTheme`, exported from `@zendeskgarden/react-theming`:
+
+```tsx
+import type { IGardenTheme } from '@zendeskgarden/react-theming';
+
+const customTheme: IGardenTheme = {
+  ...DEFAULT_THEME,
+  rtl: true
+};
+```

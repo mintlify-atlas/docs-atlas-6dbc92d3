@@ -1,0 +1,88 @@
+---
+title: "Welcome to Zendesk Garden"
+description: "A collection of accessible, themeable React components that implement the Zendesk Garden design system."
+---
+
+Garden React Components is Zendesk's open-source design system for React. It provides a suite of accessible, consistent, and highly customizable UI components that you can use to build great customer service experiences.
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Get Garden components installed and configured in your React app.
+  </Card>
+  <Card title="Theming" icon="palette" href="/theming">
+    Customize colors, fonts, and component styles with ThemeProvider.
+  </Card>
+  <Card title="Components" icon="grid-2" href="/components/buttons">
+    Browse the full library of 22+ accessible, production-ready components.
+  </Card>
+  <Card title="Architecture" icon="sitemap" href="/guides/architecture">
+    Understand Garden's Container-View-Element architecture.
+  </Card>
+</CardGroup>
+
+## Why Garden?
+
+Garden is built around three core principles:
+
+**Accessibility first** — Every component follows WAI-ARIA patterns and supports keyboard navigation, focus management, and screen readers out of the box.
+
+**Themeable by design** — A single `ThemeProvider` at the root of your app gives you control over colors, spacing, typography, and per-component CSS overrides.
+
+**Composable and flexible** — Components follow a consistent subcomponent pattern (e.g., `Modal.Header`, `Modal.Body`) making complex UIs easy to assemble.
+
+## Quick example
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Button } from '@zendeskgarden/react-buttons';
+
+const App = () => (
+  <ThemeProvider>
+    <Button isPrimary onClick={() => console.log('clicked')}>
+      Get started
+    </Button>
+  </ThemeProvider>
+);
+```
+
+## Component packages
+
+Garden ships 22+ component packages under the `@zendeskgarden` npm scope. Every package is independently installable so you only include what you need.
+
+<CardGroup cols={2}>
+  <Card title="Layout & Structure" icon="table-columns" href="/components/chrome">
+    Chrome, Grid, Accordions
+  </Card>
+  <Card title="Forms & Inputs" icon="input-text" href="/components/forms">
+    Forms, Dropdowns, Datepickers, Colorpickers
+  </Card>
+  <Card title="Overlays & Feedback" icon="layer-group" href="/components/modals">
+    Modals, Notifications, Tooltips, Loaders
+  </Card>
+  <Card title="Navigation & Data" icon="bars" href="/components/buttons">
+    Buttons, Tabs, Tables, Pagination, Breadcrumbs
+  </Card>
+  <Card title="Display" icon="image" href="/components/avatars">
+    Avatars, Tags, Typography, Draggable
+  </Card>
+  <Card title="Theming" icon="brush" href="/theming">
+    ThemeProvider, ColorSchemeProvider, RTL support
+  </Card>
+</CardGroup>
+
+## Guides
+
+<CardGroup cols={2}>
+  <Card title="Architecture" icon="sitemap" href="/guides/architecture">
+    Learn about the Container-View-Element pattern.
+  </Card>
+  <Card title="TypeScript" icon="file-code" href="/guides/typescript">
+    Interface naming, type definitions, and docgen conventions.
+  </Card>
+  <Card title="Migration" icon="arrow-right-arrow-left" href="/guides/migration">
+    Upgrade to v10 from earlier versions.
+  </Card>
+  <Card title="Contributing" icon="code-pull-request" href="/guides/contributing">
+    Guidelines for contributing to Garden.
+  </Card>
+</CardGroup>

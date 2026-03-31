@@ -1,0 +1,302 @@
+---
+title: 'Notifications'
+description: 'Components for communicating status and feedback, including Notification, Alert, Well, GlobalAlert, and toast support.'
+keywords: ['notification', 'alert', 'well', 'toast', 'global alert', 'feedback', 'zendesk garden']
+---
+
+The `@zendeskgarden/react-notifications` package provides components for communicating system feedback, status messages, and persistent notices. All components require a `ThemeProvider` at the root of your application.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-notifications
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-notifications
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-notifications
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+---
+
+## Notification
+
+An inline notice component. Use `Notification` for non-blocking messages that inform users of events, confirmations, or context without interrupting their workflow.
+
+`Notification` composes the following subcomponents:
+
+- `Notification.Title` — heading for the notification
+- `Notification.Paragraph` — body text
+- `Notification.Close` — accessible dismiss button
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Notification } from '@zendeskgarden/react-notifications';
+
+<ThemeProvider>
+  <Notification type="success">
+    <Notification.Title>Upload complete</Notification.Title>
+    <Notification.Paragraph>Your file has been saved successfully.</Notification.Paragraph>
+    <Notification.Close aria-label="Dismiss" />
+  </Notification>
+</ThemeProvider>
+```
+
+### Notification props
+
+<ParamField path="body.type" type="string">
+  Applies type-specific icon and color styles. Accepts `'info'`, `'success'`, `'warning'`, or `'error'`. Omitting this prop renders a neutral notification without an icon.
+</ParamField>
+
+### Notification.Title props
+
+<ParamField path="body.isRegular" type="boolean">
+  Applies regular (non-bold) font weight to the title.
+</ParamField>
+
+---
+
+## Toast
+
+Toasts are ephemeral notifications that appear at a fixed position on screen. Use `ToastProvider` to manage the toast stack and `useToast` to trigger toasts from any component.
+
+<Note>
+  Wrap your application (or the relevant subtree) with `ToastProvider` before calling `useToast`.
+</Note>
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Button } from '@zendeskgarden/react-buttons';
+import { Notification, ToastProvider, useToast } from '@zendeskgarden/react-notifications';
+
+const ToastTrigger = () => {
+  const { addToast } = useToast();
+
+  return (
+    <Button
+      onClick={() =>
+        addToast(({ close }) => (
+          <Notification type="info">
+            <Notification.Title>Update available</Notification.Title>
+            <Notification.Paragraph>Refresh the page to get the latest version.</Notification.Paragraph>
+            <Notification.Close onClick={close} aria-label="Dismiss" />
+          </Notification>
+        ))
+      }
+    >
+      Show toast
+    </Button>
+  );
+};
+
+<ThemeProvider>
+  <ToastProvider>
+    <ToastTrigger />
+  </ToastProvider>
+</ThemeProvider>
+```
+
+### ToastProvider props
+
+<ParamField path="body.limit" type="number">
+  Limits the number of toasts visible at one time. Excess toasts are queued and shown as existing ones are dismissed.
+</ParamField>
+
+<ParamField path="body.placementProps" type="Partial<Record<Placement, HTMLAttributes<HTMLDivElement>>>">
+  Passes HTML attributes to the toast container element for each placement. Accepts keys: `'top-start'`, `'top'`, `'top-end'`, `'bottom-start'`, `'bottom'`, `'bottom-end'`.
+</ParamField>
+
+<ParamField path="body.zIndex" type="number">
+  Sets the `z-index` of the toast container.
+</ParamField>
+
+---
+
+## Alert
+
+A prominent inline message that draws attention to critical status. Use `Alert` when the user must be aware of a condition before proceeding.
+
+`Alert` composes the following subcomponents:
+
+- `Alert.Title` — heading for the alert
+- `Alert.Paragraph` — descriptive text
+- `Alert.Close` — accessible dismiss button
+
+### Usage
+
+<Tabs>
+  <Tab title="Info">
+    ```jsx
+    import { ThemeProvider } from '@zendeskgarden/react-theming';
+    import { Alert } from '@zendeskgarden/react-notifications';
+
+    <ThemeProvider>
+      <Alert type="info">
+        <Alert.Title>Scheduled maintenance</Alert.Title>
+        <Alert.Paragraph>The system will be unavailable on Saturday from 2–4 AM UTC.</Alert.Paragraph>
+      </Alert>
+    </ThemeProvider>
+    ```
+  </Tab>
+  <Tab title="Warning">
+    ```jsx
+    import { ThemeProvider } from '@zendeskgarden/react-theming';
+    import { Alert } from '@zendeskgarden/react-notifications';
+
+    <ThemeProvider>
+      <Alert type="warning">
+        <Alert.Title>Storage almost full</Alert.Title>
+        <Alert.Paragraph>You have used 90% of your storage quota.</Alert.Paragraph>
+      </Alert>
+    </ThemeProvider>
+    ```
+  </Tab>
+  <Tab title="Error">
+    ```jsx
+    import { ThemeProvider } from '@zendeskgarden/react-theming';
+    import { Alert } from '@zendeskgarden/react-notifications';
+
+    <ThemeProvider>
+      <Alert type="error">
+        <Alert.Title>Submission failed</Alert.Title>
+        <Alert.Paragraph>There was a problem saving your changes. Please try again.</Alert.Paragraph>
+      </Alert>
+    </ThemeProvider>
+    ```
+  </Tab>
+  <Tab title="Success">
+    ```jsx
+    import { ThemeProvider } from '@zendeskgarden/react-theming';
+    import { Alert } from '@zendeskgarden/react-notifications';
+
+    <ThemeProvider>
+      <Alert type="success">
+        <Alert.Title>Changes saved</Alert.Title>
+        <Alert.Paragraph>Your profile has been updated successfully.</Alert.Paragraph>
+      </Alert>
+    </ThemeProvider>
+    ```
+  </Tab>
+</Tabs>
+
+### Alert props
+
+<ParamField path="body.type" type="string" required>
+  Applies type-specific icon and color styling. Accepts `'info'`, `'success'`, `'warning'`, or `'error'`.
+</ParamField>
+
+### Alert.Title props
+
+<ParamField path="body.isRegular" type="boolean">
+  Applies regular (non-bold) font weight to the title.
+</ParamField>
+
+---
+
+## Well
+
+A container with a visible boundary. Use `Well` to group related content or draw subtle attention to a section without conveying urgency.
+
+`Well` composes the following subcomponents:
+
+- `Well.Title` — heading for the well
+- `Well.Paragraph` — body text
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Well } from '@zendeskgarden/react-notifications';
+
+<ThemeProvider>
+  <Well>
+    <Well.Title>Did you know?</Well.Title>
+    <Well.Paragraph>
+      You can customize your dashboard by dragging and dropping widgets.
+    </Well.Paragraph>
+  </Well>
+</ThemeProvider>
+```
+
+### Well props
+
+<ParamField path="body.isRecessed" type="boolean">
+  Applies a recessed background color to visually indent the well.
+</ParamField>
+
+<ParamField path="body.isFloating" type="boolean">
+  Applies a drop shadow to elevate the well above surrounding content.
+</ParamField>
+
+---
+
+## GlobalAlert
+
+A full-width banner that spans the top of the page. Use `GlobalAlert` for site-wide announcements, mandatory notices, or persistent system status messages.
+
+`GlobalAlert` composes the following subcomponents:
+
+- `GlobalAlert.Title` — heading for the banner
+- `GlobalAlert.Content` — body text area
+- `GlobalAlert.Button` — an inline action button
+- `GlobalAlert.Close` — accessible dismiss button
+
+<Note>
+  `GlobalAlert` always renders with light theme colors regardless of the active theme.
+</Note>
+
+### Usage
+
+```jsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { GlobalAlert } from '@zendeskgarden/react-notifications';
+
+<ThemeProvider>
+  <GlobalAlert type="warning">
+    <GlobalAlert.Title>Upcoming changes</GlobalAlert.Title>
+    <GlobalAlert.Content>
+      Our terms of service will be updated on April 1st.
+    </GlobalAlert.Content>
+    <GlobalAlert.Button>Review changes</GlobalAlert.Button>
+    <GlobalAlert.Close aria-label="Dismiss" />
+  </GlobalAlert>
+</ThemeProvider>
+```
+
+### GlobalAlert props
+
+<ParamField path="body.type" type="string" required>
+  Applies type-specific color styling. Accepts `'info'`, `'success'`, `'warning'`, or `'error'`.
+</ParamField>
+
+### GlobalAlert.Title props
+
+<ParamField path="body.isRegular" type="boolean">
+  Applies regular (non-bold) font weight to the title.
+</ParamField>
+
+### GlobalAlert.Button props
+
+<ParamField path="body.isBasic" type="boolean">
+  Renders the button with basic (minimal) styling.
+</ParamField>

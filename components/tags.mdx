@@ -1,0 +1,227 @@
+---
+title: "Tags"
+description: "Tag component for labeling, categorizing, and filtering content in the Garden design system."
+---
+
+The `@zendeskgarden/react-tags` package provides the `Tag` component with subcomponents for avatars and close buttons. Tags are compact labels used to categorize content, show attributes, or let users remove applied filters.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm install @zendeskgarden/react-tags
+
+# Peer dependencies
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash yarn
+yarn add @zendeskgarden/react-tags
+
+# Peer dependencies
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+```bash pnpm
+pnpm add @zendeskgarden/react-tags
+
+# Peer dependencies
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+
+</CodeGroup>
+
+## Tag
+
+Wrap your app in `ThemeProvider` before using any Garden component.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Tag } from '@zendeskgarden/react-tags';
+
+const App = () => (
+  <ThemeProvider>
+    <Tag>Support</Tag>
+  </ThemeProvider>
+);
+```
+
+### Size
+
+The `size` prop adjusts font size and padding. The default is `medium`.
+
+```tsx
+<Tag size="small">Small</Tag>
+<Tag size="medium">Medium</Tag>
+<Tag size="large">Large</Tag>
+```
+
+### Color (hue)
+
+Use the `hue` prop to apply a color to the tag. You can pass a primary hue name, a theme color token, or any hex value.
+
+<Tabs>
+  <Tab title="Named hues">
+    ```tsx
+    <Tag hue="blue">Blue</Tag>
+    <Tag hue="green">Green</Tag>
+    <Tag hue="grey">Grey</Tag>
+    <Tag hue="kale">Kale</Tag>
+    <Tag hue="red">Red</Tag>
+    <Tag hue="yellow">Yellow</Tag>
+    ```
+  </Tab>
+  <Tab title="Theme tokens">
+    ```tsx
+    <Tag hue="primaryHue">Primary</Tag>
+    <Tag hue="successHue">Success</Tag>
+    <Tag hue="neutralHue">Neutral</Tag>
+    <Tag hue="chromeHue">Chrome</Tag>
+    <Tag hue="dangerHue">Danger</Tag>
+    <Tag hue="warningHue">Warning</Tag>
+    ```
+  </Tab>
+  <Tab title="Hex value">
+    ```tsx
+    <Tag hue="#6f42c1">Custom purple</Tag>
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  Named hues (`blue`, `green`, `grey`, `kale`, `red`, `yellow`) and theme tokens (`primaryHue`, `successHue`, etc.) automatically adapt to light and dark mode. Raw hex values do not adapt.
+</Note>
+
+### Pill style
+
+Set `isPill` to apply fully rounded corners. This is commonly used alongside `Tag.Avatar`.
+
+```tsx
+<Tag isPill>
+  <Tag.Avatar>
+    <img alt="" src="/images/user.png" />
+  </Tag.Avatar>
+  Jane Doe
+</Tag>
+```
+
+### Round style
+
+Set `isRound` to render a symmetrical, circular tag. Best used for single characters or numbers.
+
+```tsx
+<Tag isRound>3</Tag>
+```
+
+### Regular font weight
+
+By default, tag text is bold. Set `isRegular` to use normal font weight.
+
+```tsx
+<Tag isRegular>Label</Tag>
+```
+
+---
+
+## Tag.Avatar
+
+Nest `Tag.Avatar` as the first child of `Tag` to display a small image or icon inside the tag. Pair it with `isPill` for the best visual result.
+
+```tsx
+<Tag isPill>
+  <Tag.Avatar>
+    <img alt="" src="/images/avatars/user.png" />
+  </Tag.Avatar>
+  Jane Doe
+</Tag>
+```
+
+---
+
+## Tag.Close
+
+Add `Tag.Close` as the last child of `Tag` to show a remove button. Provide an `aria-label` describing what will be removed. When the tag contains a close button, make the tag itself focusable by setting `tabIndex={0}`.
+
+```tsx
+<Tag tabIndex={0}>
+  Support
+  <Tag.Close
+    aria-label="press delete to remove Support tag"
+    onClick={() => handleRemove('Support')}
+  />
+</Tag>
+```
+
+<Tip>
+  `Tag.Close` sets `tabIndex={-1}` by default so that keyboard focus stays on the tag element, not the button. Users activate the close action from the tag's `keydown` handler.
+</Tip>
+
+---
+
+## Full example
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Tag } from '@zendeskgarden/react-tags';
+
+const FilterTag = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
+  <Tag hue="blue" tabIndex={0}>
+    {label}
+    <Tag.Close
+      aria-label={`press delete to remove ${label} tag`}
+      onClick={onRemove}
+    />
+  </Tag>
+);
+
+const App = () => (
+  <ThemeProvider>
+    <FilterTag label="Urgent" onRemove={() => console.log('removed')} />
+
+    <Tag isPill hue="green">
+      <Tag.Avatar>
+        <img alt="" src="/images/user.png" />
+      </Tag.Avatar>
+      Jane Doe
+      <Tag.Close aria-label="press delete to remove Jane Doe tag" onClick={() => {}} />
+    </Tag>
+  </ThemeProvider>
+);
+```
+
+---
+
+## Props
+
+### Tag
+
+<ParamField path="size" type="'small' | 'medium' | 'large'" default="'medium'">
+  Adjusts font size and padding.
+</ParamField>
+
+<ParamField path="hue" type="string">
+  Sets the tag color. Accepts primary hues (`blue`, `green`, `grey`, `kale`, `red`, `yellow`), theme tokens (`primaryHue`, `successHue`, `neutralHue`, `chromeHue`, `dangerHue`, `warningHue`), or any hex value.
+</ParamField>
+
+<ParamField path="isPill" type="boolean">
+  Applies fully rounded (pill) styling.
+</ParamField>
+
+<ParamField path="isRound" type="boolean">
+  Applies circular styling. Best for single characters or numbers.
+</ParamField>
+
+<ParamField path="isRegular" type="boolean">
+  Applies regular (non-bold) font weight.
+</ParamField>
+
+### Tag.Close
+
+<ParamField path="aria-label" type="string">
+  Accessible label for the close button. Should describe the item being removed.
+</ParamField>
+
+<ParamField path="onClick" type="(event: React.MouseEvent) => void">
+  Called when the close button is clicked.
+</ParamField>

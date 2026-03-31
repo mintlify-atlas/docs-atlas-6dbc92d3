@@ -1,0 +1,148 @@
+---
+title: "Grid"
+description: "Flexbox grid layout and resizable pane components from @zendeskgarden/react-grid."
+---
+
+<CodeGroup>
+```bash npm
+npm install @zendeskgarden/react-grid
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+```bash yarn
+yarn add @zendeskgarden/react-grid
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+```bash pnpm
+pnpm add @zendeskgarden/react-grid
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+</CodeGroup>
+
+## Grid
+
+The `Grid` component is a flexbox-based 12-column grid inspired by Bootstrap's grid system. Column spans and gutter widths are controlled via props.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Grid } from '@zendeskgarden/react-grid';
+
+<ThemeProvider>
+  <Grid>
+    <Grid.Row>
+      <Grid.Col md={4}>One third</Grid.Col>
+      <Grid.Col md={4}>One third</Grid.Col>
+      <Grid.Col md={4}>One third</Grid.Col>
+    </Grid.Row>
+    <Grid.Row>
+      <Grid.Col md={6}>Half</Grid.Col>
+      <Grid.Col md={6}>Half</Grid.Col>
+    </Grid.Row>
+  </Grid>
+</ThemeProvider>
+```
+
+### Grid props
+
+<ParamField path="columns" type="number" default="12">
+  Total number of columns in the grid.
+</ParamField>
+
+<ParamField path="gutters" type="string | false">
+  Gutter size between columns. Accepts theme spacing values or `false` to remove gutters.
+</ParamField>
+
+<ParamField path="debug" type="boolean">
+  Highlights column boundaries for layout debugging.
+</ParamField>
+
+### Grid.Col props
+
+<ParamField path="xs | sm | md | lg | xl" type="number | 'auto'">
+  Column span at the given breakpoint (1–12, or `'auto'`).
+</ParamField>
+
+<ParamField path="offset" type="number">
+  Number of columns to offset the column from the left.
+</ParamField>
+
+<ParamField path="order" type="number | 'first' | 'last'">
+  CSS flex order for the column.
+</ParamField>
+
+## Pane
+
+`PaneProvider` and `Pane` enable resizable split-pane layouts using CSS Grid or Flexbox. Draggable `Pane.Splitter` handles let users resize panes interactively.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { PaneProvider, Pane } from '@zendeskgarden/react-grid';
+
+<ThemeProvider>
+  <PaneProvider
+    totalPanesHeight={600}
+    totalPanesWidth={1000}
+    defaultColumnValues={{ 'col-1': 1, 'col-2': 1 }}
+    defaultRowValues={{ 'row-1': 1 }}
+  >
+    {({ getGridTemplateColumns, getGridTemplateRows }) => (
+      <div
+        style={{
+          display: 'grid',
+          width: '1000px',
+          height: '600px',
+          gridTemplateRows: getGridTemplateRows(),
+          gridTemplateColumns: getGridTemplateColumns()
+        }}
+      >
+        <Pane>
+          <Pane.Content>Left pane</Pane.Content>
+          <Pane.Splitter layoutKey="col-1" min={0} max={2} orientation="end" />
+        </Pane>
+        <Pane>
+          <Pane.Content>Right pane</Pane.Content>
+        </Pane>
+      </div>
+    )}
+  </PaneProvider>
+</ThemeProvider>
+```
+
+### PaneProvider props
+
+<ParamField path="totalPanesWidth" type="number" required>
+  Total pixel width available for all panes.
+</ParamField>
+
+<ParamField path="totalPanesHeight" type="number" required>
+  Total pixel height available for all panes.
+</ParamField>
+
+<ParamField path="defaultColumnValues" type="Record<string, number>">
+  Initial `fr` unit values for each named column splitter.
+</ParamField>
+
+<ParamField path="defaultRowValues" type="Record<string, number>">
+  Initial `fr` unit values for each named row splitter.
+</ParamField>
+
+### Pane.Splitter props
+
+<ParamField path="layoutKey" type="string" required>
+  Unique key matching a column or row value defined in `PaneProvider`.
+</ParamField>
+
+<ParamField path="min" type="number" required>
+  Minimum `fr` size for the pane.
+</ParamField>
+
+<ParamField path="max" type="number" required>
+  Maximum `fr` size for the pane.
+</ParamField>
+
+<ParamField path="orientation" type="'start' | 'end' | 'top' | 'bottom'" required>
+  Which edge of the pane the splitter is attached to.
+</ParamField>
+
+<Warning>
+  `Pane` uses the `ResizeObserver` API, which is not available in Node.js. Polyfill it when running tests with Jest.
+</Warning>

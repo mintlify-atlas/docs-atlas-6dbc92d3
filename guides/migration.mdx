@@ -1,0 +1,59 @@
+---
+title: 'Migration'
+description: 'Breaking changes and migration steps for each major Garden release.'
+keywords: ['migration', 'upgrade', 'breaking changes', 'v10', 'v9', 'styled-components', 'react-components']
+---
+
+Use this guide when upgrading between major Garden versions.
+
+## Migrating to v10
+
+<Warning>
+  v10 includes breaking changes to both the package structure and the `styled-components` peer
+  dependency version. Read the sections below before upgrading.
+</Warning>
+
+### Single package
+
+Garden v10 ships all component exports in a **single** `@zendeskgarden/react-components` package, replacing the previous collection of individual component packages.
+
+<Tabs>
+  <Tab title="v9 (before)">
+    ```bash
+    npm install @zendeskgarden/react-buttons @zendeskgarden/react-forms @zendeskgarden/react-tabs
+    ```
+
+    ```tsx
+    import { Button } from '@zendeskgarden/react-buttons';
+    import { Field, Input } from '@zendeskgarden/react-forms';
+    import { Tabs } from '@zendeskgarden/react-tabs';
+    ```
+  </Tab>
+  <Tab title="v10 (after)">
+    ```bash
+    npm install @zendeskgarden/react-components
+    ```
+
+    ```tsx
+    import { Button, Field, Input, Tabs } from '@zendeskgarden/react-components';
+    ```
+  </Tab>
+</Tabs>
+
+### styled-components peer dependency
+
+Garden v10 updated the `styled-components` peer dependency to `^6.0.0` to enable CSS container query support. Container queries [cannot be supported in v5.x](https://github.com/styled-components/styled-components/issues/3911#issuecomment-1386516979).
+
+Upgrade `styled-components` alongside Garden:
+
+```bash
+npm install styled-components@^6.0.0 @zendeskgarden/react-components@^10.0.0
+```
+
+<Note>
+  Review the [styled-components v6 migration guide](https://styled-components.com/docs/faqs#what-do-i-need-to-do-to-migrate-to-v6) for any additional changes required in your own styled components.
+</Note>
+
+## Migrating to v9
+
+See the [v9 Migration Guide](https://github.com/zendeskgarden/react-components/blob/main/docs/migrations/v9.md) on GitHub.

@@ -1,0 +1,137 @@
+---
+title: "Accordions"
+description: "Collapsible sections and step-by-step stepper components from @zendeskgarden/react-accordions."
+---
+
+<CodeGroup>
+```bash npm
+npm install @zendeskgarden/react-accordions
+npm install react react-dom styled-components @zendeskgarden/react-theming
+```
+```bash yarn
+yarn add @zendeskgarden/react-accordions
+yarn add react react-dom styled-components @zendeskgarden/react-theming
+```
+```bash pnpm
+pnpm add @zendeskgarden/react-accordions
+pnpm add react react-dom styled-components @zendeskgarden/react-theming
+```
+</CodeGroup>
+
+## Accordion
+
+The `Accordion` component collapses and expands content sections. It manages focus, keyboard navigation, and ARIA attributes automatically.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Accordion } from '@zendeskgarden/react-accordions';
+
+<ThemeProvider>
+  <Accordion level={3}>
+    <Accordion.Section>
+      <Accordion.Header>
+        <Accordion.Label>Section one</Accordion.Label>
+      </Accordion.Header>
+      <Accordion.Panel>Content for section one.</Accordion.Panel>
+    </Accordion.Section>
+    <Accordion.Section>
+      <Accordion.Header>
+        <Accordion.Label>Section two</Accordion.Label>
+      </Accordion.Header>
+      <Accordion.Panel>Content for section two.</Accordion.Panel>
+    </Accordion.Section>
+  </Accordion>
+</ThemeProvider>
+```
+
+### Accordion props
+
+<ParamField path="level" type="1 | 2 | 3 | 4 | 5 | 6" required>
+  Sets the `aria-level` heading rank for accordion headers in the document outline.
+</ParamField>
+
+<ParamField path="expandedSections" type="any[]">
+  Controls which sections are expanded (controlled mode). Pass an array of section indices.
+</ParamField>
+
+<ParamField path="defaultExpandedSections" type="any[]">
+  Sets initially expanded sections in uncontrolled mode.
+</ParamField>
+
+<ParamField path="onChange" type="(value: any) => void">
+  Callback fired when a section is expanded or collapsed.
+</ParamField>
+
+<ParamField path="isBare" type="boolean">
+  Hides section borders for a minimal appearance.
+</ParamField>
+
+<ParamField path="isCollapsible" type="boolean" default="true">
+  Allows the currently expanded section to be collapsed by clicking it again.
+</ParamField>
+
+<ParamField path="isCompact" type="boolean">
+  Applies compact padding to section headers and panels.
+</ParamField>
+
+<ParamField path="isAnimated" type="boolean" default="true">
+  Animates section expansion and collapse.
+</ParamField>
+
+<ParamField path="isExpandable" type="boolean">
+  Allows multiple sections to be open simultaneously (uncontrolled mode).
+</ParamField>
+
+### Controlled accordion
+
+```tsx
+import { useState } from 'react';
+import { Accordion } from '@zendeskgarden/react-accordions';
+
+const ControlledAccordion = () => {
+  const [expanded, setExpanded] = useState([0]);
+
+  return (
+    <Accordion level={3} expandedSections={expanded} onChange={setExpanded}>
+      <Accordion.Section>
+        <Accordion.Header><Accordion.Label>First</Accordion.Label></Accordion.Header>
+        <Accordion.Panel>First panel content.</Accordion.Panel>
+      </Accordion.Section>
+      <Accordion.Section>
+        <Accordion.Header><Accordion.Label>Second</Accordion.Label></Accordion.Header>
+        <Accordion.Panel>Second panel content.</Accordion.Panel>
+      </Accordion.Section>
+    </Accordion>
+  );
+};
+```
+
+## Stepper
+
+The `Stepper` component displays a sequence of steps, useful for multi-step forms and onboarding flows.
+
+```tsx
+import { ThemeProvider } from '@zendeskgarden/react-theming';
+import { Stepper } from '@zendeskgarden/react-accordions';
+
+<ThemeProvider>
+  <Stepper>
+    <Stepper.Step>
+      <Stepper.Label>Account setup</Stepper.Label>
+      <Stepper.Content>Enter your name and email address.</Stepper.Content>
+    </Stepper.Step>
+    <Stepper.Step>
+      <Stepper.Label>Configure preferences</Stepper.Label>
+      <Stepper.Content>Choose your notification and display settings.</Stepper.Content>
+    </Stepper.Step>
+    <Stepper.Step>
+      <Stepper.Label>Review and confirm</Stepper.Label>
+      <Stepper.Content>Review your choices before finishing.</Stepper.Content>
+    </Stepper.Step>
+  </Stepper>
+</ThemeProvider>
+```
+
+<Note>
+  `Stepper` renders step indicators with connecting lines automatically. Use `activeIndex` on `Stepper` to control which step is active.
+</Note>
